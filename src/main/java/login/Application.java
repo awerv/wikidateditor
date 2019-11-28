@@ -31,7 +31,7 @@ public class Application {
 
     @RequestMapping(value = "/")
     @ResponseBody
-    public String home(@RequestBody String payload) {
+    public String home() {
         return "OK";
     }
 
