@@ -1,6 +1,4 @@
-package main.java.application;
-
-import main.java.miscs.RandomString;
+package hu.bme.aut.wikidataeditor.filter;
 
 import java.io.IOException;
 
@@ -15,13 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
 
+import hu.bme.aut.wikidataeditor.misc.RandomString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class CookieFilter implements Filter {
-
-    @Override
+	@Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         for(Cookie c : req.getCookies()){

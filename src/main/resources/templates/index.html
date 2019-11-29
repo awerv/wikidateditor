@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorator="layout">
+	<head>
+		<title>Wikidata editor</title>
+	</head>
+	<body>
+		<div layout:fragment="content">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Artist</th>
+						<th>Creation</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="painting, iter : ${paintings}">
+						<td><a th:href="${'/site/view/' + iter.index}" th:text="${painting.name}"></a></td>
+						<td th:text="${painting.artist}"></td>
+						<td th:text="${painting.creation}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>

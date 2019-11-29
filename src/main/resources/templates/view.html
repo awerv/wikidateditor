@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorator="layout">
+	<head>
+		<title>View Painting</title>
+	</head>
+	<body>
+		<div layout:fragment="content">
+			<dl>
+				<dt>Name</dt>
+				<dd th:text="${painting.name}"></dd>
+				<dt>Artist</dt>
+				<dd th:text="${painting.artist}"></dd>
+				<dt>Creation</dt>
+				<dd th:text="${painting.creation}"></dd>
+			</dl>
+		</div>
+	</body>
+</html>

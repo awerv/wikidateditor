@@ -1,4 +1,4 @@
-package main.java.miscs;
+package hu.bme.aut.wikidataeditor.misc;
 
 import java.security.SecureRandom;
 

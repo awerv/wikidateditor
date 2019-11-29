@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+		<link rel="stylesheet" href="/css/style.css" />
+	</head>
+	<body>
+		<div th:include="header"/>
+		<div class="admin-content">
+			<div layout:fragment="content"></div>
+		</div>
+	</body>
+</html>
