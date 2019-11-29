@@ -70,7 +70,7 @@ public class Application {
 
         log.info("Search started for " + phrase);
         Set<WbSearchEntitiesResult> res = SearchWrapper.search(phrase);
-        log.info("NUmber of results for " + phrase + ": " + res.size());
+        log.info("Number of results for " + phrase + ": " + res.size());
         return "OK";
     }
 

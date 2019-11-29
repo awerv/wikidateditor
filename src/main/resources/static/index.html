@@ -4,23 +4,42 @@
             <meta charset="UTF-8">
             <link rel="stylesheet" type="text/css" href="/css/index.css" >
             <link rel="stylesheet" type="text/css" href="css/demo.css" />
-            <link rel="stylesheet" type="text/css" href="css/normalize.css" />    
+			<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+
+			<link rel="stylesheet" type="text/css" href="css/login.css" />
+
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
     </head>
     <body>
-        <section class="section section--menu" id="Viola">
-            <h2 class="section__title">Viola</h2>
-            <span class="link-copy"></span>
-            <nav class="menu menu--viola">
-                <ul class="menu__list">
-                    <li class="menu__item menu__item--current"><a href="#" class="menu__link">WikiData</a></li>
-                    <li class="menu__item"><a href="#" class="menu__link">Brows</a></li>
-                    <li class="menu__item"><a href="#" class="menu__link">Search</a></li>
-                    <li class="menu__item"><a href="#" class="menu__link">Login</a></li>
-                    <li class="menu__item"><a href="#" class="menu__link">Create</a></li>
-                </ul>
-            </nav>
-        </section>
 
+		<div class="modal fade text-center" id="modal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				</div>
+			</div>
+		</div>
+
+
+		<div class="section-container">
+			<section class="section section--menu" id="Viola">
+				<h2 class="section__title">Viola</h2>
+				<span class="link-copy"></span>
+				<nav class="menu menu--viola">
+					<ul class="menu__list">
+						<li class="menu__item menu__item--current"><a href="#" class="menu__link">WikiData</a></li>
+						<li class="menu__item"><a href="#" class="menu__link" id="browse">Browse</a></li>
+						<li class="menu__item"><a href="#" class="menu__link" id="search">Search</a></li>
+						<li class="menu__item"><a href="#" class="menu__link" id="login">Login</a></li>
+						<li class="menu__item"><a href="#" class="menu__link" id="create">Create</a></li>
+					</ul>
+				</nav>
+			</section>
+		</div>
+		
         <!-- /container -->
 		<script src="js/classie.js"></script>
 		<script src="js/clipboard.min.js"></script>
@@ -32,6 +51,14 @@
 						ev.preventDefault();
 
 						var item = ev.target.parentNode; // li
+
+						switch(ev.target.id){
+							case "login":
+							$('.modal-content').load('login.html');
+							$('#modal').modal('show');
+								break;
+						}
+
 
 						// return if already current
 						if (classie.has(item, 'menu__item--current')) {

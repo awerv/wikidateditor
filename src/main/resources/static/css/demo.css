@@ -197,7 +197,7 @@ a:focus {
 .section--menu {
 	position: relative;
 	overflow: hidden;
-	min-height: 80vh;
+	min-height: 20vh;
 	padding: 2em 0 8em;
 }
 
