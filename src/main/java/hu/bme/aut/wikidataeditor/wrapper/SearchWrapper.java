@@ -1,4 +1,4 @@
-package main.java.wrappers;
+package hu.bme.aut.wikidataeditor.wrapper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -16,9 +16,6 @@ import org.wikidata.wdtk.wikibaseapi.WbSearchEntitiesResult;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class SearchWrapper {
     public static HashSet<WbSearchEntitiesResult> search(String phrase){
 

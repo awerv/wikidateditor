@@ -1,8 +1,9 @@
-package main.java.auth;
+package hu.bme.aut.wikidataeditor.auth;
 
 import java.util.HashMap;
 
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+
 
 public class SessionDB{
     private HashMap<String, BasicApiConnection> session_map;
