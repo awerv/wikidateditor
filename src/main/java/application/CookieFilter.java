@@ -1,6 +1,6 @@
-package main.java.login;
+package main.java.application;
 
-import main.java.login.RandomString;
+import main.java.miscs.RandomString;
 
 import java.io.IOException;
 
@@ -23,11 +23,9 @@ public class CookieFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("Cookie setter filter called");
         HttpServletRequest req = (HttpServletRequest) request;
         for(Cookie c : req.getCookies()){
             if(c.getName().equals("Wikidatacookie")){
-                log.info("Caller already has a cookie");
                 chain.doFilter(request, response);
                 return;
             }
@@ -36,7 +34,7 @@ public class CookieFilter implements Filter {
         RandomString rnd = new RandomString(48);
         Cookie newcookie = new Cookie("Wikidatacookie", rnd.nextString());
         newcookie.setMaxAge(3600);
-//        newcookie.setSecure(true);
+        newcookie.setSecure(true);
         newcookie.setHttpOnly(true);
 
         res.addCookie(newcookie);

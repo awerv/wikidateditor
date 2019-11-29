@@ -1,15 +1,19 @@
-package main.java.login;
+package main.java.application;
 
 import main.java.auth.Credentials;
-import main.java.auth.Authenticator;
 import main.java.auth.SessionDB;
 
-import main.java.login.RandomString;
+import main.java.miscs.RandomString;
+
+import main.java.wrappers.SearchWrapper;
+import main.java.wrappers.LoginWrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonPrimitive;
 
-import  lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
@@ -18,22 +22,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
+import org.wikidata.wdtk.wikibaseapi.WbSearchEntitiesResult;
 
 @SpringBootApplication
 @RestController
 @Slf4j
 public class Application {
-
-    @RequestMapping(value = "/")
-    @ResponseBody
-    public String home() {
-        return "OK";
-    }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
@@ -42,13 +42,7 @@ public class Application {
 
         SessionDB sessions = SessionDB.getInstance();
 
-        String user = payload.split("&")[0].split("=")[1];
-        String pass = payload.split("&")[1].split("=")[1];
-//        Credentials cred = new Gson().fromJson(payload, Credentials.class);
-        Credentials cred = new Credentials(user, pass);
-
-        log.info(user);
-        log.info(pass);
+        Credentials cred = new Gson().fromJson(payload, Credentials.class);
 
         log.info("Recieved authentication request for " + cred.getUsername());
 
@@ -57,7 +51,7 @@ public class Application {
             return "ALREADYIN";
         }
 
-        BasicApiConnection conn = Authenticator.login(cred);
+        BasicApiConnection conn = LoginWrapper.login(cred);
 
         if(conn == null){
             log.info("Authentication of " + cred.getUsername() + "failed");
@@ -68,6 +62,16 @@ public class Application {
 
             return "AUTHOK";
         }
+    }
+
+    @RequestMapping(value="/search")
+    @ResponseBody
+    public String search(@RequestParam String phrase){
+
+        log.info("Search started for " + phrase);
+        Set<WbSearchEntitiesResult> res = SearchWrapper.search(phrase);
+        log.info("NUmber of results for " + phrase + ": " + res.size());
+        return "OK";
     }
 
     public static void main(String[] args) {

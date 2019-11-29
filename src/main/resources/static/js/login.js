@@ -10,12 +10,14 @@ $(document).ready(function(){
     
         xhr.onreadystatechange = function(){
             if(xhr.readyState === 4){
-                if(xhr.responseText != 'Authentication failed'){
-                    var token = xhr.responseText
-                    console.log(token);
-                    document.cookie = token;
-                } else if(xhr.status === 403){
+                var msg = xhr.responseText
+                if(xhr.responseText === 'ALREADYIN'){
+                    console.log(msg);
+                } else if(xhr.responseText === 'AUTHFAIL'){
                     $("#modal").dialog("open");
+                } else if(xhr.responseText === 'AUTHOK'){
+                    console.log(msg);
+                    window.location.replace('/');
                 }
             }
         }

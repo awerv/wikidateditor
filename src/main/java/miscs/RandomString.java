@@ -1,4 +1,4 @@
-package main.java.login;
+package main.java.miscs;
 
 import java.security.SecureRandom;
 

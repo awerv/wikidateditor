@@ -1,4 +1,4 @@
-package main.java.auth;
+package main.java.wrappers;
 
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -32,7 +32,7 @@ import main.java.auth.Credentials;
 //      edittestrandompw
 
 @Slf4j
-public class Authenticator{
+public class LoginWrapper{
 
     public static BasicApiConnection login(Credentials cred){
         WebResourceFetcherImpl

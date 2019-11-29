@@ -1,0 +1,67 @@
+<html>
+
+    <head>
+            <meta charset="UTF-8">
+            <link rel="stylesheet" type="text/css" href="/css/index.css" >
+            <link rel="stylesheet" type="text/css" href="css/demo.css" />
+            <link rel="stylesheet" type="text/css" href="css/normalize.css" />    
+    </head>
+    <body>
+        <section class="section section--menu" id="Viola">
+            <h2 class="section__title">Viola</h2>
+            <span class="link-copy"></span>
+            <nav class="menu menu--viola">
+                <ul class="menu__list">
+                    <li class="menu__item menu__item--current"><a href="#" class="menu__link">WikiData</a></li>
+                    <li class="menu__item"><a href="#" class="menu__link">Brows</a></li>
+                    <li class="menu__item"><a href="#" class="menu__link">Search</a></li>
+                    <li class="menu__item"><a href="#" class="menu__link">Login</a></li>
+                    <li class="menu__item"><a href="#" class="menu__link">Create</a></li>
+                </ul>
+            </nav>
+        </section>
+
+        <!-- /container -->
+		<script src="js/classie.js"></script>
+		<script src="js/clipboard.min.js"></script>
+		<script>
+		(function() {
+			[].slice.call(document.querySelectorAll('.menu')).forEach(function(menu) {
+				var menuItems = menu.querySelectorAll('.menu__link'),
+					setCurrent = function(ev) {
+						ev.preventDefault();
+
+						var item = ev.target.parentNode; // li
+
+						// return if already current
+						if (classie.has(item, 'menu__item--current')) {
+							return false;
+						}
+						// remove current
+						classie.remove(menu.querySelector('.menu__item--current'), 'menu__item--current');
+						// set current
+						classie.add(item, 'menu__item--current');
+					};
+
+				[].slice.call(menuItems).forEach(function(el) {
+					el.addEventListener('click', setCurrent);
+				});
+			});
+
+			[].slice.call(document.querySelectorAll('.link-copy')).forEach(function(link) {
+				link.setAttribute('data-clipboard-text', location.protocol + '//' + location.host + location.pathname + '#' + link.parentNode.id);
+				new Clipboard(link);
+				link.addEventListener('click', function() {
+					classie.add(link, 'link-copy--animate');
+					setTimeout(function() {
+						classie.remove(link, 'link-copy--animate');
+					}, 300);
+				});
+			});
+		})(window);
+		</script>
+     
+    </body>
+
+</html>      
+    
