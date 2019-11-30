@@ -55,8 +55,10 @@ public class WikidataService {
 				+ "} ";
 		if (filter != null && !filter.isEmpty()) {
 			filterString = 
-				"  ?item rdfs:label ?itemLabel. "
+				"  ?item schema:description ?itemDescription. "
+				+ "  ?item rdfs:label ?itemLabel. "
 				+ "  FILTER(LANG(?itemLabel) = \"en\") "
+				+ "  FILTER(LANG(?itemDescription) = \"en\") "
 				+ "FILTER (CONTAINS(?itemLabel, \"" + filter + "\")) . ";
 		}
 		
@@ -80,25 +82,34 @@ public class WikidataService {
 				BindingSet bs = result.next();
 				
 				Binding b = bs.getBinding("item");
-				String url = b == null ? null : b.toString();
+				String url = b == null ? null : b.getValue().toString();
 				
 				b = bs.getBinding("itemDescription");
-				String description = b == null ? null : b.toString();
+				String description = b == null ? null : b.getValue().toString();
 				
 				b = bs.getBinding("itemLabel");
-				String label = b == null ? null : b.toString();
+				String label = b == null ? null : b.getValue().toString();
 				
 				String[] tokens = url.split("/");
 				String id = tokens.length > 0 ? tokens[tokens.length - 1] : null;
 				
 				Paint painting = Paint.builder()
 					.id(id).url(url)
-					.label(label).description(description)
+					.label(withoutLanguageCode(label))
+					.description(withoutLanguageCode(description))
 					.build();
 				paintings.add(painting);
 			}
 			
 			return paintings;
 		}
+	}
+	
+	public String withoutLanguageCode(String raw) {
+		if(raw !=null && raw.startsWith("\"") && raw.endsWith("\"@en")) {
+			return raw.substring(1, raw.length() - 4);
+		}
+		
+		return raw;
 	}
 }

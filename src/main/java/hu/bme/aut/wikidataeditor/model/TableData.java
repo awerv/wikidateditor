@@ -13,4 +13,5 @@ public class TableData {
 	private Integer count;
 	private Integer page;
 	private Integer pageSize;
+	private Integer pageCount;
 }
