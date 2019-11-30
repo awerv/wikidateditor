@@ -26,7 +26,6 @@
 body {
 	font-family: 'Avenir Next', Avenir, 'Helvetica Neue', 'Lato', 'Segoe UI', Helvetica, Arial, sans-serif;
 	color: #444;
-	background: #fff;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -197,7 +196,7 @@ a:focus {
 .section--menu {
 	position: relative;
 	overflow: hidden;
-	min-height: 20vh;
+	min-height: 10vh;
 	padding: 2em 0 8em;
 }
 
@@ -311,7 +310,6 @@ a:focus {
 	margin: 0 5px;
 	text-transform: none;
 	-webkit-font-smoothing: antialiased;
-	speak: none;
 }
 
 .codrops-icon--drop:before {

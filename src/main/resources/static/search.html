@@ -1,0 +1,96 @@
+<div>
+
+            <nav class="navbar navbar-expand-lg navbar-dark blue lighten-2 mb-4">
+      
+                    <!-- Collapsible content -->
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    
+                        <form class="form-inline mr-auto" id="search-form">
+                            <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="phrase">
+                            <button class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" type="submit" id="searchbtn">Search</button>
+                        </form>
+                    
+                    </div>
+                    <!-- Collapsible content -->
+                  
+                </nav>
+                <!--/.Navbar-->            
+            <table id="result-table" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Label</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Url</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Actions</th>                
+                    </tr>
+                </thead>
+            </table>
+
+            <input type="button" class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" value="Close" onclick="$('#fatmodal').modal('hide');">
+
+    <script>
+
+        function iconhandler(e){
+            console.log(e.id);
+            // TODO: check if authenticated
+            // TODO: pop up login if not
+            // TODO: pop up edit modal
+        }
+
+        $(document).ready(function(){
+
+            var table = $('#result-table').DataTable( {
+                "searching": false,
+                "paging": false,
+                "columns": [
+                    { "data": "label", "title": "Label" },
+                    { "data": "entityId", "title": "ID" },
+                    { "data": "url", "title": "Url" },
+                    { "data": "description", "title": "Description" },
+                    { "data": "buttons", "title": "Actions"}
+                ],
+                "columnDefs": [{
+                    "targets": -1,
+                    "render": function(data, type, row){
+                        return '<i id="' + row.entityId + '-edit" class="fas fa-edit fa-xl" onclick="iconhandler(this);"></i>' +
+                            '<i id="' + row.entityId + '-delete" class="fas fa-trash-alt fa-xl" onclick="iconhandler(this);"></i>';
+                    }},
+                    {
+                        "targets": 2,
+                        "render": function(data, type, row){
+                            return '<a target="_blank" href="' + row.url + '">link</a>';
+                    }}
+                ]
+            } );
+
+            $('.modal-content').find('*').each(function(){
+                $(this).css("font-size", "16px");
+            });
+
+
+            $('#search-form').submit(function(e){
+                e.preventDefault();
+
+                var phrase = $('#phrase').val();
+                console.log(phrase);
+
+                $.post('/search', {"phrase": phrase}, function(data, status){
+                    if(status == 'success'){
+                        table.clear();
+                        table.rows.add(JSON.parse(data)).draw();
+                        $('.modal-content').find('*').each(function(){
+                            $(this).css("font-size", "16px");
+                        });
+
+                    }
+
+                });
+
+            } );
+
+        });
+
+    </script>
+
+</div>

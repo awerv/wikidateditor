@@ -39,6 +39,7 @@ html {
     width: 100%;
     min-height: 100%;
     padding: 20px;
+    background-color: #140f16;
   }
   
   #formContent {
@@ -46,7 +47,7 @@ html {
     border-radius: 10px 10px 10px 10px;
     background: #fff;
     padding: 30px;
-    width: 90%;
+    width: 100%;
     max-width: 450px;
     position: relative;
     padding: 0px;

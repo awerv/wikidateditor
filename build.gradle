@@ -26,6 +26,7 @@ dependencies {
 	compile 'org.wikidata.wdtk:wdtk-util:0.11.0'
 	compile group: 'org.wikidata.wdtk', name: 'wdtk-wikibaseapi', version: '0.11.0'
 	compile group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '2.4.1'
+	compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'

@@ -132,7 +132,7 @@
 	transition-duration: 0.4s;
 }
 
-#content {
-	width: 100%;
-	height: 100%;
-}
+
+body {
+	background-image: url("https://www.wikinative.com/wp-content/uploads/2019/06/iStock-942607194.jpg");
+} 

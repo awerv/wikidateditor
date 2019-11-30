@@ -2,35 +2,52 @@
 
     <head>
             <meta charset="UTF-8">
+
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+			<link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+
+			<!-- Font Awesome -->
+			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+			<!-- Material Design Bootstrap -->
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.11/css/mdb.min.css" rel="stylesheet">
+
             <link rel="stylesheet" type="text/css" href="/css/index.css" >
             <link rel="stylesheet" type="text/css" href="css/demo.css" />
 			<link rel="stylesheet" type="text/css" href="css/normalize.css" />
 
 			<link rel="stylesheet" type="text/css" href="css/login.css" />
+			<link rel="stylesheet" type="text/css" href="css/search.css" />
+			<link rel="stylesheet" type="text/css" href="css/browse.css" />
 
-			<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
 
-			<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+			<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+			<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
     </head>
     <body>
 
-		<div class="modal fade text-center" id="modal" role="dialog">
+		<div class="modal fade text-center" id="thinmodal" role="dialog">
 			<div class="modal-dialog">
 				<div class="modal-content">
 				</div>
 			</div>
 		</div>
 
-
+		<div class="modal fade text-center" id="fatmodal" role="dialog">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+					</div>
+				</div>
+			</div>
+	
 		<div class="section-container">
 			<section class="section section--menu" id="Viola">
-				<h2 class="section__title">Viola</h2>
 				<span class="link-copy"></span>
 				<nav class="menu menu--viola">
 					<ul class="menu__list">
-						<li class="menu__item menu__item--current"><a href="#" class="menu__link">WikiData</a></li>
+						<li class="menu__item menu__item--current"><a href="#" class="menu__link" id="wikidata">WikiData</a></li>
 						<li class="menu__item"><a href="#" class="menu__link" id="browse">Browse</a></li>
 						<li class="menu__item"><a href="#" class="menu__link" id="search">Search</a></li>
 						<li class="menu__item"><a href="#" class="menu__link" id="login">Login</a></li>
@@ -53,9 +70,21 @@
 						var item = ev.target.parentNode; // li
 
 						switch(ev.target.id){
+							case "wikidata":
+								var win = window.open("https://www.wikidata.org/", '_blank');
+								win.focus();
+								break;
 							case "login":
-							$('.modal-content').load('login.html');
-							$('#modal').modal('show');
+								$('#thinmodal .modal-dialog .modal-content').load('login.html');
+								$('#thinmodal').modal('show');
+								break;
+							case "search":
+								$('#fatmodal .modal-dialog .modal-content').load('search.html');
+								$('#fatmodal').modal('show');
+								break;
+							case "browse":
+								$('#fatmodal .modal-dialog .modal-content').load('browse.html');
+								$('#fatmodal').modal('show');
 								break;
 						}
 
