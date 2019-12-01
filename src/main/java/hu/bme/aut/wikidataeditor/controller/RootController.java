@@ -1,9 +1,6 @@
 package hu.bme.aut.wikidataeditor.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +23,7 @@ import hu.bme.aut.wikidataeditor.model.TableData;
 import hu.bme.aut.wikidataeditor.property.WikidataProperties;
 import hu.bme.aut.wikidataeditor.service.LoginService;
 import hu.bme.aut.wikidataeditor.service.WikidataService;
+import hu.bme.aut.wikidataeditor.validator.PaintingValidator;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -41,6 +39,9 @@ public class RootController{
     
     @Autowired
     WikidataProperties props;
+    
+    @Autowired
+    PaintingValidator validator;
     
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody Credentials credentials, HttpServletRequest request) {
@@ -94,13 +95,12 @@ public class RootController{
 	}
     
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> create(@RequestBody PaintingDTO modificationData, HttpServletRequest request) {
+    public ResponseEntity<List<String>> create(@RequestBody PaintingDTO painting, HttpServletRequest request) {
     	checkLogin(request);
     	
-    	wikidataService.createPainting(modificationData, request);
-    	
-    	Map<String, String> errors = new HashMap<>();
+    	List<String> errors = validator.validate(painting);
     	if (errors.isEmpty()) {
+    		wikidataService.createPainting(painting, request);
     		return new ResponseEntity<>(null, HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -108,26 +108,12 @@ public class RootController{
     }
     
     @PostMapping("/update")
-    public ResponseEntity<Map<String, String>> update(@RequestBody PaintingDTO modificationData, HttpServletRequest request) {
+    public ResponseEntity<List<String>> update(@RequestBody PaintingDTO painting, HttpServletRequest request) {
     	checkLogin(request);
     	
-    	
-    	
-    	Map<String, String> errors = new HashMap<>();
+    	List<String> errors = validator.validate(painting);
     	if (errors.isEmpty()) {
-    		return new ResponseEntity<>(null, HttpStatus.OK);
-    	} else {
-    		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    	}
-    }
-    
-    @PostMapping("/delete")
-    public ResponseEntity<Map<String, String>> delete(@RequestBody PaintingDTO modificationData, HttpServletRequest request) {
-    	checkLogin(request);
-    	
-    	
-    	Map<String, String> errors = new HashMap<>();
-    	if (errors.isEmpty()) {
+    		wikidataService.updatePainting(painting,request);
     		return new ResponseEntity<>(null, HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);

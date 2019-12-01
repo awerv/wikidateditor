@@ -1,5 +1,6 @@
 package hu.bme.aut.wikidataeditor.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.Builder;
@@ -13,7 +14,7 @@ public class PaintingDTO {
 	private String label;
 	private String description;
 	private String creator;
-	private String ctime;
+	private LocalDate ctime;
 	private String invnum;
 	private List<String> materials;
 	private String location;
