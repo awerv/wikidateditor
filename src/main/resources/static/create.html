@@ -25,24 +25,27 @@
         <!-- Tabs Titles -->
                         
         <!-- Icon -->
-        <div class="first">
+        <div>
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0EHw9OytxKmTIIyrIlqyATKasoXIK87QFHJcFxJcpRmzA7kTE&s" id="icon" alt="Create Icon" />
         </div>
                        
         <!-- Login Form -->
         <form id="create-form">
-            <label for="creator">The person who created the painting</label><br/>
-            <input type="text" id="creator" class="second" name="creator" placeholder="Creator (Q*******)">
+             <label for="label">The person who created the painting</label><br/>
+            <input type="text" id="label" name="label" placeholder="Label">
 
+            <label for="creator">The person who created the painting</label><br/>
+            <input type="text" id="creator" name="creator" placeholder="Creator (Q*******)">
+        
             <label for="ctime">The time of creation</label><br/>
-            <input type="date" name="ctime" id="ctime" class="third" data-provide="datepicker"><br/>
+            <input type="date" name="ctime" id="ctime"><br/>
 
             <label for="invnum">An identifier of the physical object</label><br/>
-            <input type="text" id="invnum" class="forth" name="invnum" placeholder="Inventory number">
+            <input type="text" id="invnum" name="invnum" placeholder="Inventory number">
 
             <label for="materials">Materials used for the painting</label><br/>
             <!-- class="selectpicker" multiple title="Choose from these..." data-style="btn-primary" -->
-            <select id="materials" name="materials" class="fifth mdb-select colorful-select dropdown-primary">
+            <select id="materials" name="materials" multiple>
                 <option value="Q16354">whiteboard</option>
                 <option value="Q1066536">rice paper</option>
                 <option value="Q1287518">Shaped canvas</option>
@@ -70,15 +73,17 @@
             </select>
 
             <label for="location">Location of the painting </label><br/>
-            <input type="text" id="location" class="sixth" name="location" placeholder="Location (Q*******)">
+            <input type="text" id="location" name="location" placeholder="Location (Q*******)">
 
+            <label for="description">Short description of the painting </label><br/>
+            <textarea rows="4" cols="40" name="description" id="description" form="create-form"></textarea>
 
-            <input type="submit" class="seventh" value="Submit">
+            <input type="submit" value="Submit">
         </form>
 
         <!-- Remind Passowrd -->
         <div id="formFooter">
-            <input type="button" class="fourth" value="Close" onclick="$('#thinmodal-create').modal('hide');">
+            <input type="button" value="Close" onclick="$('#thinmodal-create').modal('hide');">
         </div>
         <script>
             $('#thinmodal-create').on('shown.bs.modal', function(){
@@ -93,21 +98,40 @@
                             if(xhr.status === 200){
 
                                 var xhr2 = new XMLHttpRequest();
-                            
+                                var url2 = '/create';
+
                                 xhr2.onreadystatechange = function(){
                                     if(xhr2.readyState === 4){
+                                        console.log(xhr.responseText);
+/*
                                         console.log("response arrived");
                                         if(xhr2.status === 200){
                                             $('#success-modal').modal('show');
                                         } else if(xhr2.status === 401){
                                             $('#fail-modal').modal('show');
                                         }
+*/
+
                                     }
                                 }
                             
-                                xhr2.open("POST", url);
+                                var payload = JSON.stringify(
+                                    { 
+                                        id: null,
+                                        url: null,
+                                        label: $('#label').val(),
+                                        description: $('#description').val(),
+                                        creator: $('#creator').val(),
+                                        ctime: $('#ctime').val(),
+                                        invnum: $('#invnum').val(),
+                                        materials: $('#materials').val(),
+                                        location: $('#location').val()
+                                    }
+                                );
+                                console.log(payload)
+                                xhr2.open("POST", url2);
                                 xhr2.setRequestHeader("Content-Type", "application/json");
-                                xhr2.send(JSON.stringify({ username: $('#login').val(), password: $('#password').val() }));
+                                xhr2.send(payload);
 
 
 

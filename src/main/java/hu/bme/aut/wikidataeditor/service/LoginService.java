@@ -46,6 +46,7 @@ public class LoginService {
 	
 	public boolean isLoggedIn(HttpServletRequest request) {
 		BasicApiConnection connection = getApiConnection(request);
+		log.info(connection.toString());
 		return connection != null && connection.isLoggedIn();
 	}
 	

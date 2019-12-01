@@ -100,7 +100,7 @@ public class RootController{
     	wikidataService.createPainting(modificationData, request);
     	
     	Map<String, String> errors = new HashMap<>();
-    	if (!errors.isEmpty()) {
+    	if (errors.isEmpty()) {
     		return new ResponseEntity<>(null, HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -114,7 +114,7 @@ public class RootController{
     	
     	
     	Map<String, String> errors = new HashMap<>();
-    	if (!errors.isEmpty()) {
+    	if (errors.isEmpty()) {
     		return new ResponseEntity<>(null, HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -127,7 +127,7 @@ public class RootController{
     	
     	
     	Map<String, String> errors = new HashMap<>();
-    	if (!errors.isEmpty()) {
+    	if (errors.isEmpty()) {
     		return new ResponseEntity<>(null, HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -135,8 +135,8 @@ public class RootController{
     }
     
     private void checkLogin(HttpServletRequest request) {
-    	if (loginService.isLoggedIn(request)) {
-    		throw new UnauthorizedException();
+    	if (!loginService.isLoggedIn(request)) {
+			throw new UnauthorizedException();
     	}
     }
 }

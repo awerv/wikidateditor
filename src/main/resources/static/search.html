@@ -56,12 +56,23 @@
             var qid = e.id.split('-')[0];
             var action = e.id.split('-')[1];
 
+            console.log(e.id);
+            console.log(qid);
+            console.log(action);
             if(action === 'view'){
                 // no login required
-                $('#thinsubmodal .modal-dialog .modal-content').load('view.html');
-				$('#thinsubmodal').modal('show');
 
-                console.log(qid);
+
+                $.get('/view/'+qid, function(data){
+                    console.log(data);
+
+//                    $('#thinsubmodal .modal-dialog .modal-content').load('/view/'+qid);
+//    				$('#thinsubmodal').modal('show');
+
+//                    console.log(qid);
+
+
+                });
 
             } else if(action === 'edit' || action === 'delete'){
                 // login required
@@ -85,9 +96,9 @@
                     "targets": -1,
                     "orderable": false,
                     "render": function(data, type, row){
-                        return '<i id="' + row.entityId + '-view"class="far fa-eye fa-2x" onclick="iconhandler(this);"></i> ' +
-                            '<i id="' + row.entityId + '-edit" class="fas fa-edit fa-2x" onclick="iconhandler(this);"></i> ' +
-                            '<i id="' + row.entityId + '-delete" class="fas fa-trash-alt fa-2x" onclick="iconhandler(this);"></i>';
+                        return '<i id="' + row.id + '-view"class="far fa-eye fa-2x" onclick="iconhandler(this);"></i> ' +
+                            '<i id="' + row.id + '-edit" class="fas fa-edit fa-2x" onclick="iconhandler(this);"></i> ' +
+                            '<i id="' + row.id + '-delete" class="fas fa-trash-alt fa-2x" onclick="iconhandler(this);"></i>';
                     }},
                     {
                         "targets": 2,
@@ -101,6 +112,7 @@
 
         const maxlength = 10;
         var current = 0;
+        var table;
 
         function click_handler_register(pages, pageCount){
             $(".pagination a").click(function(e){
@@ -219,37 +231,11 @@
             });
         }
         $('#fatmodal-search').on('shown.bs.modal', function(){
-            var table;
 
             if($.fn.dataTable.isDataTable("#result-table")){
-                $('#result-table').destory();
+                table.destroy();
             }
-            table = $('#result-table').DataTable( {
-                "searching": false,
-                "paging": false,
-                "columns": [
-                    { "data": "label", "title": "Label" },
-                    { "data": "id", "title": "ID" },
-                    { "data": "url", "title": "Url" },
-                    { "data": "description", "title": "Description" },
-                    { "data": "buttons", "title": "Actions"}
-                ],
-                "columnDefs": [{
-                    "targets": -1,
-                    "orderable": false,
-                    "render": function(data, type, row){
-                        return '<i id="' + row.entityId + '-view"class="far fa-eye fa-2x" onclick="iconhandler(this);"></i> ' +
-                            '<i id="' + row.entityId + '-edit" class="fas fa-edit fa-2x" onclick="iconhandler(this);"></i> ' +
-                            '<i id="' + row.entityId + '-delete" class="fas fa-trash-alt fa-2x" onclick="iconhandler(this);"></i>';
-                    }},
-                    {
-                        "targets": 2,
-                        "orderable": false,
-                        "render": function(data, type, row){
-                            return '<a target="_blank" href="' + row.url + '">link</a>';
-                    }}
-                ]
-            } );
+            table = create_table();
 
             $('.modal-content').find('*').each(function(){
                 $(this).css("font-size", "16px");
