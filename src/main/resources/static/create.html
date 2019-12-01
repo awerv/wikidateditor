@@ -1,0 +1,87 @@
+<div class="wrapper">
+        <div id="formContent">
+        <!-- Tabs Titles -->
+                        
+        <!-- Icon -->
+        <div class="first">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0EHw9OytxKmTIIyrIlqyATKasoXIK87QFHJcFxJcpRmzA7kTE&s" id="icon" alt="Create Icon" />
+        </div>
+                       
+        <!-- Login Form -->
+        <form id="create-form">
+            <label for="creator">The person who created the painting</label><br/>
+            <input type="text" id="creator" class="second" name="creator" placeholder="Creator (Q*******)">
+
+            <label for="ctime">The time of creation</label><br/>
+            <input type="date" name="ctime" id="ctime" class="third" data-provide="datepicker"><br/>
+
+            <label for="invnum">An identifier of the physical object</label><br/>
+            <input type="text" id="invnum" class="forth" name="invnum" placeholder="Inventory number">
+
+            <label for="materials">Materials used for the painting</label><br/>
+            <!-- class="selectpicker" multiple title="Choose from these..." data-style="btn-primary" -->
+            <select id="materials" name="materials" class="fifth mdb-select colorful-select dropdown-primary">
+                <option value="Q16354">whiteboard</option>
+                <option value="Q1066536">rice paper</option>
+                <option value="Q1287518">Shaped canvas</option>
+                <option value="Q25631150">fresco</option>
+                <option value="Q175166">tempera</option>
+                <option value="Q189085">pastel</option>
+                <option value="Q204330">gouache paint</option>
+                <option value="Q207849">acrylic paint</option>
+                <option value="Q296955">oil paint</option>
+                <option value="Q297081">oil pastel</option>
+                <option value="Q787010">automotive paint</option>
+                <option value="Q818405">linseed oil</option>
+                <option value="Q927860">cephalopod ink</option>
+                <option value="Q1421953">fixative</option>
+                <option value="Q1456571">alkyd</option>
+                <option value="Q3002365">Crayon Aquarell</option>
+                <option value="Q3110378">drawing gum</option>
+                <option value="Q3217799">nitrocellulose paint</option>
+                <option value="Q3389292">spray gun</option>
+                <option value="Q3541776">colour tube</option>
+                <option value="Q7234160">Poster paint</option>
+                <option value="Q11813560">stencil</option>
+                <option value="Q12981547">India ink</option>
+                <option value="Q22915256">watercolor paint</option>
+            </select>
+
+            <label for="location">Location of the painting </label><br/>
+            <input type="text" id="location" class="sixth" name="location" placeholder="Location (Q*******)">
+
+
+            <input type="submit" class="seventh" value="Submit">
+        </form>
+
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <input type="button" class="fourth" value="Close" onclick="$('#thinmodal').modal('hide');">
+        </div>
+        <script>
+            $('#create-form').submit(function(e){
+                e.preventDefault();
+
+                var xhr = new XMLHttpRequest();
+                var url = '/create';
+            
+                xhr.onreadystatechange = function(){
+                    if(xhr.readyState === 4){
+                        var msg = xhr.responseText
+                        console.log(msg);
+                    }
+                }
+            
+                xhr.open("POST", url);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify({
+                    creator = $('#creator').val(),
+                    ctime = $('#ctime').val(),
+                    invnum = $('#invnum').val(),
+                    materials = $('#materials').val(),
+                    location = $('#location').val()
+                }));
+
+            });
+        </script>
+    </div>
