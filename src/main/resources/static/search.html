@@ -1,12 +1,37 @@
 <div>
 
-	<div class="modal fade text-center" id="thinsubmodal" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
+        <div class="modal fade text-center" id="auth-fail-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Failure</h5>
+                        <button type="button" class="close" aria-label="Close" onclick="$('#auth-fail-modal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>You must log in first to create new paintings on wikidata</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="$('#auth-fail-modal').modal('hide');">Close</button>
+                    </div>        
+                </div>
             </div>
         </div>
-    </div>
-    <!--
+    
+        <div class="modal fade text-center" id="thinsubmodal-edit" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+        <div class="modal fade text-center" id="thinsubmodal-view" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+            <!--
     <div class="modal fade text-center" id="fatsubmodal" role="dialog">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -56,26 +81,41 @@
             var qid = e.id.split('-')[0];
             var action = e.id.split('-')[1];
 
-            console.log(e.id);
-            console.log(qid);
-            console.log(action);
             if(action === 'view'){
                 // no login required
 
 
                 $.get('/view/'+qid, function(data){
-                    console.log(data);
 
-//                    $('#thinsubmodal .modal-dialog .modal-content').load('/view/'+qid);
-//    				$('#thinsubmodal').modal('show');
-
-//                    console.log(qid);
-
+                    $('#thinsubmodal-view .modal-dialog .modal-content').load('/view/'+qid);
+    				$('#thinsubmodal-view').modal('show');
 
                 });
 
             } else if(action === 'edit' || action === 'delete'){
-                // login required
+                var xhr = new XMLHttpRequest();
+                    var url = '/login';
+            
+                    xhr.onreadystatechange = function(){
+                        if(xhr.readyState === 4){
+                            if(xhr.status === 200){
+                                console.log("login check done");
+                                console.log(action);
+                                if(action === 'edit'){
+                                    console.log("loading edit");
+                                    $('#thinsubmodal-edit .modal-dialog .modal-content').load('/update/'+qid);
+                                    $('#thinsubmodal-edit').modal('show');
+
+                                }
+                            } else if(xhr.status === 403){
+                                console.log('403');
+                                $('#auth-fail-modal').modal('show');
+                            }
+                        }
+                    }
+                    xhr.open("GET", url);
+                    xhr.send();
+
             }
 
 
@@ -230,77 +270,76 @@
                 i++;
             });
         }
-        $('#fatmodal-search').on('shown.bs.modal', function(){
+        $('#fatmodal-search').on('shown.bs.modal', function(e){
+            if(e.target.id === 'fatmodal-search'){
+                if($.fn.dataTable.isDataTable("#result-table")){
+                    table.destroy();
+                }
+                table = create_table();
 
-            if($.fn.dataTable.isDataTable("#result-table")){
-                table.destroy();
-            }
-            table = create_table();
-
-            $('.modal-content').find('*').each(function(){
-                $(this).css("font-size", "16px");
-            });
-
-            $('#search-form').submit(function(e){
-                e.preventDefault();
-
-                var phrase = $('#phrase').val();
-                console.log(phrase);
-
-                $.get('/search', {"f": phrase, "p": 0}, function(data, status){
-
-                    console.log(data);
-
-                    var pages = Array.from(Array(data.pageCount).keys());
-                    var maxpgname = pages.length + 1;
-
-                    // add pager div
-                    // pagecount > 10 -> ...
-                    // draw enough 
-
-                    var from = 0;
-                    if(data.pageCount <= maxlength){
-
-                        $('.pagination').append('<a id="backstep" href="#" hidden>&laquo;</a>');
-                        for(var i = from; i != maxlength+1; i++){
-                            if(i == from){
-                                $('.pagination').append('<a class="active pagenum" id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
-                            } else {
-                                $('.pagination').append('<a id="' + pages[i] + '" class="pagenum" href="#"> ' + (i+1) + ' </a>');
-                            }
-                        }
-                        $('.pagination').append('<a id="fwdstep" href="#">&raquo;</a>');
-
-                    } else {
-
-                        $('.pagination').append('<a id="backstep" href="#" hidden>&laquo;</a>');
-                        for(var i = from, j = 0; j != maxlength - 4; j++, i++){
-                            if(i == from){
-                                $('.pagination').append('<a class="active pagenum" id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
-                            } else {
-                                $('.pagination').append('<a id="' + pages[i] + '" class="pagenum" href="#"> ' + (i+1) + ' </a>');
-                            }
-                        }
-                        $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
-                        $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
-                        $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
-                        $('.pagination').append('<a id="' + (data.pageCount - 1) + '" class="pagenum" href="#"> ' + data.pageCount + ' </a>');
-                        $('.pagination').append('<a id="fwdstep" href="#">&raquo;</a>');
-        
-                    }
-                    click_handler_register(pages, data.pageCount);
-
-                    if(status == 'success'){
-                        
-                        table.rows.add(data.paintings).draw();
-                        $('.modal-content').find('*').each(function(){
-                            $(this).css("font-size", "16px");
-                        });
-                    }
+                $('.modal-content').find('*').each(function(){
+                    $(this).css("font-size", "16px");
                 });
 
-            } );
+                $('#search-form').submit(function(e){
+                    e.preventDefault();
 
+                    var phrase = $('#phrase').val();
+
+                    $.get('/search', {"f": phrase, "p": 0}, function(data, status){
+
+
+                        var pages = Array.from(Array(data.pageCount).keys());
+                        var maxpgname = pages.length + 1;
+
+                        // add pager div
+                        // pagecount > 10 -> ...
+                        // draw enough 
+
+                        var from = 0;
+                        if(data.pageCount <= maxlength){
+
+                            $('.pagination').append('<a id="backstep" href="#" hidden>&laquo;</a>');
+                            for(var i = from; i != maxlength+1; i++){
+                                if(i == from){
+                                    $('.pagination').append('<a class="active pagenum" id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
+                                } else {
+                                    $('.pagination').append('<a id="' + pages[i] + '" class="pagenum" href="#"> ' + (i+1) + ' </a>');
+                                }
+                            }
+                            $('.pagination').append('<a id="fwdstep" href="#">&raquo;</a>');
+
+                        } else {
+
+                            $('.pagination').append('<a id="backstep" href="#" hidden>&laquo;</a>');
+                            for(var i = from, j = 0; j != maxlength - 4; j++, i++){
+                                if(i == from){
+                                    $('.pagination').append('<a class="active pagenum" id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
+                                } else {
+                                    $('.pagination').append('<a id="' + pages[i] + '" class="pagenum" href="#"> ' + (i+1) + ' </a>');
+                                }
+                            }
+                            $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
+                            $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
+                            $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
+                            $('.pagination').append('<a id="' + (data.pageCount - 1) + '" class="pagenum" href="#"> ' + data.pageCount + ' </a>');
+                            $('.pagination').append('<a id="fwdstep" href="#">&raquo;</a>');
+            
+                        }
+                        click_handler_register(pages, data.pageCount);
+
+                        if(status == 'success'){
+                            
+                            table.rows.add(data.paintings).draw();
+                            $('.modal-content').find('*').each(function(){
+                                $(this).css("font-size", "16px");
+                            });
+                        }
+                    });
+
+                } );
+
+            }
         });
         $('#fatmodal-search').on('hode.bs.modal', function(){
             $('.pagination a').remove();

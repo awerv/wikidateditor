@@ -107,7 +107,13 @@ public class RootController{
     	}
     }
     
-    @PostMapping("/update")
+    @GetMapping("/update/{id}")
+	public String update(@PathVariable String id, Model model, HttpServletRequest request) {
+		model.addAttribute("painting", wikidataService.getPaintingWithMetadata(id));
+		return "edit";
+	}
+
+	@PostMapping("/update")
     public ResponseEntity<Map<String, String>> update(@RequestBody PaintingDTO modificationData, HttpServletRequest request) {
     	checkLogin(request);
     	

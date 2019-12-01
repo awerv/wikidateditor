@@ -1,0 +1,176 @@
+<div class="wrapper">
+
+        <div class="modal fade text-center" id="create-fail-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Failure</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#create-fail-modal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#create-fail-modal').modal('hide');">Close</button>
+                    </div>        
+                </div>
+            </div>
+        </div>
+    
+        <div class="modal fade text-center" id="create-success-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Success</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#success-modal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" id="error-message">
+                        <p>Painting creation was successful.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#success-modal').modal('hide');">Close</button>
+                    </div>        
+                </div>
+            </div>
+        </div>
+
+        <div id="formContent">
+        <!-- Tabs Titles -->
+                        
+        <!-- Icon -->
+        <div>
+            <img src="data:image/png;base64,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" id="icon" alt="Edit Icon" />
+        </div>
+                       
+        <!-- Login Form -->
+        <form id="create-form">
+            <input type="hidden" id="edit-id" name="id" th:attr="value = ${painting.id}">
+            <input type="hidden" id="edit-url" name="url" th:attr="value = ${painting.url}">
+
+
+            <label for="label">The person who created the painting</label><br/>
+            <input type="text" id="label" name="label" placeholder="Label">
+
+            <label for="creator">The person who created the painting</label><br/>
+            <input type="text" id="creator" name="creator" placeholder="Creator (Q*******)">
+        
+            <label for="ctime">The time of creation</label><br/>
+            <input type="date" name="ctime" id="ctime"><br/>
+
+            <label for="invnum">An identifier of the physical object</label><br/>
+            <input type="text" id="invnum" name="invnum" placeholder="Inventory number">
+
+            <label for="materials">Materials used for the painting</label><br/>
+            <!-- class="selectpicker" multiple title="Choose from these..." data-style="btn-primary" -->
+            <select id="materials" name="materials" multiple>
+                <option value="Q16354">whiteboard</option>
+                <option value="Q1066536">rice paper</option>
+                <option value="Q1287518">Shaped canvas</option>
+                <option value="Q25631150">fresco</option>
+                <option value="Q175166">tempera</option>
+                <option value="Q189085">pastel</option>
+                <option value="Q204330">gouache paint</option>
+                <option value="Q207849">acrylic paint</option>
+                <option value="Q296955">oil paint</option>
+                <option value="Q297081">oil pastel</option>
+                <option value="Q787010">automotive paint</option>
+                <option value="Q818405">linseed oil</option>
+                <option value="Q927860">cephalopod ink</option>
+                <option value="Q1421953">fixative</option>
+                <option value="Q1456571">alkyd</option>
+                <option value="Q3002365">Crayon Aquarell</option>
+                <option value="Q3110378">drawing gum</option>
+                <option value="Q3217799">nitrocellulose paint</option>
+                <option value="Q3389292">spray gun</option>
+                <option value="Q3541776">colour tube</option>
+                <option value="Q7234160">Poster paint</option>
+                <option value="Q11813560">stencil</option>
+                <option value="Q12981547">India ink</option>
+                <option value="Q22915256">watercolor paint</option>
+            </select>
+
+            <label for="location">Location of the painting </label><br/>
+            <input type="text" id="location" name="location" placeholder="Location (Q*******)">
+
+            <label for="description">Short description of the painting </label><br/>
+            <textarea rows="4" cols="40" name="description" id="description" form="create-form"></textarea>
+
+            <input type="submit" value="Submit">
+        </form>
+
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <input type="button" value="Close" onclick="$('#thinmodal-create').modal('hide');">
+        </div>
+        <script>
+            $('#thinmodal-create').on('shown.bs.modal', function(){
+                $('#create-form').submit(function(e){
+                    e.preventDefault();
+
+                    var xhr = new XMLHttpRequest();
+                    var url = '/login';
+            
+                    xhr.onreadystatechange = function(){
+                        if(xhr.readyState === 4){
+                            if(xhr.status === 200){
+
+                                var xhr2 = new XMLHttpRequest();
+                                var url2 = '/create';
+
+                                xhr2.onreadystatechange = function(){
+                                    if(xhr2.readyState === 4){
+                                        console.log(xhr.responseText);
+
+                                        console.log("response arrived");
+                                        if(xhr2.status === 200){
+                                            $('#create-success-modal').modal('show');
+                                        } else {
+                                            $('#error-message p').remove();
+                                            JSON.parse(xhr.responseText).array.forEach(element => {
+                                                $('#error-message').add("<p>" + element + "</p>");
+                                            });
+                                            $('#create-fail-modal').modal('show');
+                                        }
+
+
+                                    }
+                                }
+                            
+                                var payload = JSON.stringify(
+                                    { 
+                                        id: $('#id').val(),
+                                        url: $('#url').val(),
+                                        label: $('#label').val(),
+                                        description: $('#description').val(),
+                                        creator: $('#creator').val(),
+                                        ctime: $('#ctime').val(),
+                                        invnum: $('#invnum').val(),
+                                        materials: $('#materials').val(),
+                                        location: $('#location').val()
+                                    }
+                                );
+                                console.log(payload)
+                                xhr2.open("POST", url2);
+                                xhr2.setRequestHeader("Content-Type", "application/json");
+                                xhr2.send(payload);
+
+
+
+                            } else if(xhr.status === 403){
+                                $('#error-message p').remove();
+                                $('#error-message').add("<p>Login required for painting creation</p>");
+                                $('#create-fail-modal').modal('show');
+                            }
+                        }
+                    }
+            
+                    xhr.open("GET", url);
+                    xhr.send();
+
+                });
+            });
+        </script>
+    </div>
