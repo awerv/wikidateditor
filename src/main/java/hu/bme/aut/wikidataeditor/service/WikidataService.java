@@ -22,6 +22,7 @@ import org.wikidata.wdtk.wikibaseapi.WikibaseDataEditor;
 import org.wikidata.wdtk.wikibaseapi.WikibaseDataFetcher;
 import org.wikidata.wdtk.wikibaseapi.apierrors.MediaWikiApiErrorException;
 
+import hu.bme.aut.wikidataeditor.model.Entity;
 import hu.bme.aut.wikidataeditor.model.ItemMetaData;
 import hu.bme.aut.wikidataeditor.model.PaintingDTO;
 import hu.bme.aut.wikidataeditor.model.PaintingListDTO;
@@ -90,6 +91,7 @@ public class WikidataService {
 		List<PaintingListDTO> paintings = new ArrayList<>();
 		
 		String filter = tableData.getFilter();
+		
 		String filterString = " SERVICE wikibase:label {"
 				+ "  bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\"."
 				+ "} ";
@@ -145,13 +147,87 @@ public class WikidataService {
 		}
 	}
 	
-	public void createPainting(PaintingDTO painting, HttpServletRequest request) {
-		try {
-			ApiConnection connection = loginService.getApiConnection(request);
-			WikibaseDataEditor wbde = new WikibaseDataEditor(connection, wikidataProperties.getUrl());
-			wbde.setMaxLagFirstWaitTime(1000000);
+	public void createPainting(PaintingDTO painting, HttpServletRequest request) throws IOException, MediaWikiApiErrorException {
+		ApiConnection connection = loginService.getApiConnection(request);
+		WikibaseDataEditor wbde = new WikibaseDataEditor(connection, wikidataProperties.getUrl());
+		wbde.setMaxLagFirstWaitTime(1000000);
+		
+		ItemIdValue noid = ItemIdValue.NULL;
+		PropertyIdValue instancePropId
+			= (PropertyIdValue) PropertyIdValueImpl.fromId(INSTANCE_OF, wikidataProperties.getUrl());
+		PropertyIdValue creatorPropId
+			= (PropertyIdValue) PropertyIdValueImpl.fromId(CREATOR, wikidataProperties.getUrl());
+		PropertyIdValue invPropId
+			= (PropertyIdValue) PropertyIdValueImpl.fromId(INVENTORY_NUMBER, wikidataProperties.getUrl());
+		PropertyIdValue locationPropId
+			= (PropertyIdValue) PropertyIdValueImpl.fromId(LOCATION, wikidataProperties.getUrl());
+		PropertyIdValue materialPropId
+			= (PropertyIdValue) PropertyIdValueImpl.fromId(MATERIAL, wikidataProperties.getUrl());
+		
+		ItemDocumentBuilder builder = ItemDocumentBuilder.forItemId(noid)
+			.withLabel(new MonolingualTextValueImpl(painting.getLabel(), "en"))
+			.withDescription(new MonolingualTextValueImpl(painting.getDescription(), "en"));
+		
+		Statement instanceStatement = StatementBuilder.forSubjectAndProperty(noid, instancePropId)
+				.withValue(Datamodel.makeItemIdValue(Entity.PAINTING, wikidataProperties.getUrl()))
+				.build();
+		
+		if (painting.getCreator() != null) {
+			Statement creatorStatement = StatementBuilder.forSubjectAndProperty(noid, creatorPropId)
+			.withValue(Datamodel.makeItemIdValue(painting.getCreator(), wikidataProperties.getUrl()))
+			.build();
 			
-			ItemIdValue noid = ItemIdValue.NULL;
+			builder = builder.withStatement(creatorStatement);
+		}
+		
+		if (painting.getInvnum() != null) {
+			Statement invStatement = StatementBuilder.forSubjectAndProperty(noid, invPropId)
+			.withValue(Datamodel.makeStringValue(painting.getInvnum()))
+			.build();
+			
+			builder = builder.withStatement(invStatement);
+		}
+		
+		if (painting.getLocation() != null) {
+			Statement locationStatement = StatementBuilder.forSubjectAndProperty(noid, locationPropId)
+			.withValue(Datamodel.makeItemIdValue(painting.getLocation(), wikidataProperties.getUrl()))
+			.build();
+			
+			builder = builder.withStatement(locationStatement);
+		}
+		
+		if (painting.getMaterials() != null) {
+			for (String materialId : painting.getMaterials()) {
+				Statement materialStatement = StatementBuilder.forSubjectAndProperty(noid, materialPropId)
+						.withValue(Datamodel.makeItemIdValue(materialId, wikidataProperties.getUrl()))
+						.build();
+				builder = builder.withStatement(materialStatement);
+			}
+		} 
+		
+		builder = builder.withStatement(instanceStatement).withRevisionId(0);
+		wbde.createItemDocument(builder.build(), "Painting Editor", null);
+	}
+	
+	public void updatePainting(PaintingDTO painting, HttpServletRequest request) throws MediaWikiApiErrorException, IOException {
+		ApiConnection connection = loginService.getApiConnection(request);
+		WikibaseDataEditor wbde = new WikibaseDataEditor(connection, wikidataProperties.getUrl());
+		
+		WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, wikidataProperties.getUrl());
+		
+		EntityDocument entity = wbdf.getEntityDocument(painting.getId());
+		
+		if (entity instanceof ItemDocument) {
+			ItemDocument item = (ItemDocument) entity;
+			
+			ItemIdValue subjectId = (ItemIdValue) ItemIdValueImpl
+					.fromId(painting.getId(), wikidataProperties.getUrl());
+			
+			item = item.withLabel(
+					new MonolingualTextValueImpl(painting.getLabel(), "en"));
+			item = item.withDescription(
+					new MonolingualTextValueImpl(painting.getDescription(), "en"));
+			
 			PropertyIdValue creatorPropId
 				= (PropertyIdValue) PropertyIdValueImpl.fromId(CREATOR, wikidataProperties.getUrl());
 			PropertyIdValue invPropId
@@ -161,137 +237,53 @@ public class WikidataService {
 			PropertyIdValue materialPropId
 				= (PropertyIdValue) PropertyIdValueImpl.fromId(MATERIAL, wikidataProperties.getUrl());
 			
-			ItemDocumentBuilder builder = ItemDocumentBuilder.forItemId(noid)
-				.withLabel(new MonolingualTextValueImpl(painting.getLabel(), "en"))
-				.withDescription(new MonolingualTextValueImpl(painting.getDescription(), "en"));
-			
 			if (painting.getCreator() != null) {
-				Statement creatorStatement = StatementBuilder.forSubjectAndProperty(noid, creatorPropId)
+				Statement creatorStatement = StatementBuilder.forSubjectAndProperty(subjectId, creatorPropId)
 				.withValue(Datamodel.makeItemIdValue(painting.getCreator(), wikidataProperties.getUrl()))
 				.build();
 				
-				builder = builder.withStatement(creatorStatement);
+				Set<String> oldStatements = item.findStatementGroup(creatorPropId)
+						.stream().map(Statement::getStatementId).collect(Collectors.toSet());
+				
+				item = item.withoutStatementIds(oldStatements).withStatement(creatorStatement);
 			}
 			
 			if (painting.getInvnum() != null) {
-				Statement invStatement = StatementBuilder.forSubjectAndProperty(noid, invPropId)
+				Statement invStatement = StatementBuilder.forSubjectAndProperty(subjectId, invPropId)
 				.withValue(Datamodel.makeStringValue(painting.getInvnum()))
 				.build();
 				
-				builder = builder.withStatement(invStatement);
+				Set<String> oldStatements = item.findStatementGroup(invPropId)
+						.stream().map(Statement::getStatementId).collect(Collectors.toSet());
+				
+				item = item.withoutStatementIds(oldStatements).withStatement(invStatement);
 			}
 			
 			if (painting.getLocation() != null) {
-				Statement locationStatement = StatementBuilder.forSubjectAndProperty(noid, locationPropId)
+				Statement locationStatement = StatementBuilder.forSubjectAndProperty(subjectId, locationPropId)
 				.withValue(Datamodel.makeItemIdValue(painting.getLocation(), wikidataProperties.getUrl()))
 				.build();
 				
-				builder = builder.withStatement(locationStatement);
+				Set<String> oldStatements = item.findStatementGroup(locationPropId)
+						.stream().map(Statement::getStatementId).collect(Collectors.toSet());
+				
+				item = item.withoutStatementIds(oldStatements).withStatement(locationStatement);
 			}
 			
 			if (painting.getMaterials() != null) {
+				Set<String> oldStatements = item.findStatementGroup(materialPropId)
+						.stream().map(Statement::getStatementId).collect(Collectors.toSet());
+				item = item.withoutStatementIds(oldStatements);
+				
 				for (String materialId : painting.getMaterials()) {
-					Statement materialStatement = StatementBuilder.forSubjectAndProperty(noid, materialPropId)
+					Statement materialStatement = StatementBuilder.forSubjectAndProperty(subjectId, materialPropId)
 							.withValue(Datamodel.makeItemIdValue(materialId, wikidataProperties.getUrl()))
 							.build();
-					builder = builder.withStatement(materialStatement);
+					item = item.withStatement(materialStatement);
 				}
-			} 
-			builder = builder.withRevisionId(0);
-			ItemDocument newItemDocument = wbde.createItemDocument(builder.build(),
-					"Painting creation test", null);
-
-			ItemIdValue newItemId = newItemDocument.getEntityId();
-			System.out.println("*** Successfully created a new item "
-					+ newItemId.getId()
-					+ " (see https://test.wikidata.org/w/index.php?title="
-					+ newItemId.getId() + "&oldid="
-					+ newItemDocument.getRevisionId() + " for this version)");
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void updatePainting(PaintingDTO painting, HttpServletRequest request) {
-		try {
-			ApiConnection connection = loginService.getApiConnection(request);
-			WikibaseDataEditor wbde = new WikibaseDataEditor(connection, wikidataProperties.getUrl());
-			
-			WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, wikidataProperties.getUrl());
-			
-			EntityDocument entity = wbdf.getEntityDocument(painting.getId());
-			
-			if (entity instanceof ItemDocument) {
-				ItemDocument item = (ItemDocument) entity;
-				
-				ItemIdValue subjectId = (ItemIdValue) ItemIdValueImpl
-						.fromId(painting.getId(), wikidataProperties.getUrl());
-				
-				item = item.withLabel(
-						new MonolingualTextValueImpl(painting.getLabel(), "en"));
-				item = item.withDescription(
-						new MonolingualTextValueImpl(painting.getDescription(), "en"));
-				
-				PropertyIdValue creatorPropId
-					= (PropertyIdValue) PropertyIdValueImpl.fromId(CREATOR, wikidataProperties.getUrl());
-				PropertyIdValue invPropId
-					= (PropertyIdValue) PropertyIdValueImpl.fromId(INVENTORY_NUMBER, wikidataProperties.getUrl());
-				PropertyIdValue locationPropId
-					= (PropertyIdValue) PropertyIdValueImpl.fromId(LOCATION, wikidataProperties.getUrl());
-				PropertyIdValue materialPropId
-					= (PropertyIdValue) PropertyIdValueImpl.fromId(MATERIAL, wikidataProperties.getUrl());
-				
-				if (painting.getCreator() != null) {
-					Statement creatorStatement = StatementBuilder.forSubjectAndProperty(subjectId, creatorPropId)
-					.withValue(Datamodel.makeItemIdValue(painting.getCreator(), wikidataProperties.getUrl()))
-					.build();
-					
-					Set<String> oldStatements = item.findStatementGroup(creatorPropId)
-							.stream().map(Statement::getStatementId).collect(Collectors.toSet());
-					
-					item = item.withoutStatementIds(oldStatements).withStatement(creatorStatement);
-				}
-				
-				if (painting.getInvnum() != null) {
-					Statement invStatement = StatementBuilder.forSubjectAndProperty(subjectId, invPropId)
-					.withValue(Datamodel.makeStringValue(painting.getInvnum()))
-					.build();
-					
-					Set<String> oldStatements = item.findStatementGroup(invPropId)
-							.stream().map(Statement::getStatementId).collect(Collectors.toSet());
-					
-					item = item.withoutStatementIds(oldStatements).withStatement(invStatement);
-				}
-				
-				if (painting.getLocation() != null) {
-					Statement locationStatement = StatementBuilder.forSubjectAndProperty(subjectId, locationPropId)
-					.withValue(Datamodel.makeItemIdValue(painting.getLocation(), wikidataProperties.getUrl()))
-					.build();
-					
-					Set<String> oldStatements = item.findStatementGroup(locationPropId)
-							.stream().map(Statement::getStatementId).collect(Collectors.toSet());
-					
-					item = item.withoutStatementIds(oldStatements).withStatement(locationStatement);
-				}
-				
-				if (painting.getMaterials() != null) {
-					Set<String> oldStatements = item.findStatementGroup(materialPropId)
-							.stream().map(Statement::getStatementId).collect(Collectors.toSet());
-					item = item.withoutStatementIds(oldStatements);
-					
-					for (String materialId : painting.getMaterials()) {
-						Statement materialStatement = StatementBuilder.forSubjectAndProperty(subjectId, materialPropId)
-								.withValue(Datamodel.makeItemIdValue(materialId, wikidataProperties.getUrl()))
-								.build();
-						item = item.withStatement(materialStatement);
-					}
-				}
-				
-				wbde.editItemDocument(item, false, "Painting update test", null);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			wbde.editItemDocument(item, false, "Painting Editor", null);
 		}
 	}
 	

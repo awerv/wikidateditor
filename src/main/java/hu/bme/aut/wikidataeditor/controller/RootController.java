@@ -1,5 +1,6 @@
 package hu.bme.aut.wikidataeditor.controller;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
@@ -100,7 +101,12 @@ public class RootController{
     	
     	List<String> errors = validator.validate(painting);
     	if (errors.isEmpty()) {
-    		wikidataService.createPainting(painting, request);
+    		try {
+    			wikidataService.createPainting(painting, request);
+    		} catch (Exception e) {
+    			errors = Arrays.asList(e.getMessage());
+    			return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    		}
     		return new ResponseEntity<>(null, HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -113,7 +119,12 @@ public class RootController{
     	
     	List<String> errors = validator.validate(painting);
     	if (errors.isEmpty()) {
-    		wikidataService.updatePainting(painting,request);
+    		try {
+    			wikidataService.updatePainting(painting,request);
+    		} catch (Exception e) {
+    			errors = Arrays.asList(e.getMessage());
+    			return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    		}
     		return new ResponseEntity<>(null, HttpStatus.OK);
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
