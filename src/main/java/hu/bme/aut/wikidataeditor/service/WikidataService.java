@@ -13,6 +13,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.ItemIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.StringValue;
 import org.wikidata.wdtk.datamodel.interfaces.TimeValue;
 import org.wikidata.wdtk.wikibaseapi.ApiConnection;
@@ -315,7 +316,7 @@ public class WikidataService {
 						: ((ItemIdValue) creatorStatement.getValue()).getId();
 				String ctime = creationStatement == null ? null
 						: ((TimeValue) creationStatement.getValue()).getYear() + "";
-				String inventoryId = creationStatement == null ? null
+				String inventoryId = inventoryStatement == null ? null
 						: ((StringValue) inventoryStatement.getValue()).getString();
 				String location = locationStatement == null ? null
 						: ((ItemIdValue) locationStatement.getValue()).getId();
@@ -357,7 +358,7 @@ public class WikidataService {
 						: getItemMetaData(((ItemIdValue) creatorStatement.getValue()).getId(), wbdf);
 				String ctime = creationStatement == null ? null
 						: ((TimeValue) creationStatement.getValue()).getYear() + "";
-				String inventoryId = creationStatement == null ? null
+				String inventoryId = inventoryStatement == null ? null
 						: ((StringValue) inventoryStatement.getValue()).getString();
 				ItemMetaData location = locationStatement == null ? null
 						: getItemMetaData(((ItemIdValue) locationStatement.getValue()).getId(), wbdf);
@@ -394,6 +395,10 @@ public class WikidataService {
 	}
 	
 	private Statement getStatement(String statementId, ItemDocument item) {
+		StatementGroup group = item.findStatementGroup(statementId);
+		if (group == null) {
+			return null;
+		}
 		return item.findStatementGroup(statementId).stream().findFirst().orElse(null);
 	}
 	
