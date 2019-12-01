@@ -17,26 +17,34 @@
 				<dt>Description</dt>
 				<dd th:text="${painting.description}"></dd>
 				
-				<dt>Creator</dt>
-				<dd>
-					<a th:href="${painting.creator.url}" th:text="${painting.creator.label}"></a>
-				</dd>
+				<th:block th:if="painting.creator != null">
+					<dt>Creator</dt>
+					<dd>
+						<a th:href="${painting.creator.url}" th:text="${painting.creator.label}"></a>
+					</dd>
+				</th:block>
 				
-				<dt>Creation time</dt>
-				<dd th:text="${painting.ctime}"></dd>
+				<th:block th:if="painting.ctime != null">
+					<dt>Creation time</dt>
+					<dd th:text="${painting.ctime}"></dd>
+				</th:block>
 				
-				<dt>Inventory number</dt>
-				<dd th:text="${painting.invnum}"></dd>
+				<th:block th:if="painting.invnum != null">
+					<dt>Inventory number</dt>
+					<dd th:text="${painting.invnum}"></dd>
+				</th:block>
 				
 				<dt>Materials</dt>
 				<dd th:each="material : ${painting.materials}">
 					<a th:href="${material.url}" th:text="${material.label}"></a>
 				</dd>
 				
-				<dt>Location</dt>
-				<dd>
-					<a th:href="${painting.location.url}" th:text="${painting.location.label}"></a>
-				</dd>
+				<th:block th:if="painting.location != null">
+					<dt>Location</dt>
+					<dd>
+						<a th:href="${painting.location.url}" th:text="${painting.location.label}"></a>
+					</dd>
+				</th:block>
 			</dl>
 		</div>
 	</body>
