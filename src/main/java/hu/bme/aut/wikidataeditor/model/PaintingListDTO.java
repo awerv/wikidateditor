@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Paint {
+public class PaintingListDTO {
 	private String label;
 	private String id;
 	private String url;

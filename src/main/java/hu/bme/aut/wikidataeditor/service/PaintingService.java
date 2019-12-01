@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
-import hu.bme.aut.wikidataeditor.data.Painting;
+import hu.bme.aut.wikidataeditor.model.Painting;
 
 @Service
 public class PaintingService {

@@ -1,4 +1,4 @@
-package hu.bme.aut.wikidataeditor.data;
+package hu.bme.aut.wikidataeditor.model;
 
 import java.time.LocalDate;
 
