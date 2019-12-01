@@ -39,20 +39,33 @@
 		</head>
     <body>
 
-		<div class="modal fade text-center" id="thinmodal" role="dialog">
+		<div class="modal fade text-center" id="thinmodal-login" role="dialog">
 			<div class="modal-dialog">
 				<div class="modal-content">
 				</div>
 			</div>
 		</div>
-
-		<div class="modal fade text-center" id="fatmodal" role="dialog">
-				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
-					</div>
+		<div class="modal fade text-center" id="thinmodal-create" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
 				</div>
 			</div>
+		</div>
+					
+		<div class="modal fade text-center" id="fatmodal-browse" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+				</div>
+			</div>
+		</div>
 	
+		<div class="modal fade text-center" id="fatmodal-search" role="dialog">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+				</div>
+			</div>
+		</div>
+
 		<div class="section-container">
 			<section class="section section--menu" id="Viola">
 				<nav class="menu menu--viola">
@@ -86,20 +99,20 @@
 								win.focus();
 								break;
 							case "login":
-								$('#thinmodal .modal-dialog .modal-content').load('login.html');
-								$('#thinmodal').modal('show');
+								$('#thinmodal-login .modal-dialog .modal-content').load('login.html');
+								$('#thinmodal-login').modal('show');
 								break;
 							case "search":
-								$('#fatmodal .modal-dialog .modal-content').load('search.html');
-								$('#fatmodal').modal('show');
+								$('#fatmodal-search .modal-dialog .modal-content').load('search.html');
+								$('#fatmodal-search').modal('show');
 								break;
 							case "browse":
-								$('#fatmodal .modal-dialog .modal-content').load('browse.html');
-								$('#fatmodal').modal('show');
+								$('#fatmodal-browse .modal-dialog .modal-content').load('browse.html');
+								$('#fatmodal-browse').modal('show');
 								break;
 							case "create":
-								$('#thinmodal .modal-dialog .modal-content').load('create.html');
-								$('#thinmodal').modal('show');
+								$('#thinmodal-create .modal-dialog .modal-content').load('create.html');
+								$('#thinmodal-create').modal('show');
 								break;
 	
 						}

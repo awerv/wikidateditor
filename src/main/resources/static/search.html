@@ -45,7 +45,7 @@
             </thead>
         </table>            
     </div>
-    <input type="button" class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" value="Close" onclick="$('#fatmodal').modal('hide');">
+    <input type="button" class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" value="Close" onclick="$('#fatmodal-search').modal('hide');">
 
     <script>
 
@@ -218,7 +218,7 @@
                 i++;
             });
         }
-        $('#fatmodal').on('shown.bs.modal', function(){
+        $('#fatmodal-search').on('shown.bs.modal', function(){
             var table;
 
             if($.fn.dataTable.isDataTable("#result-table")){
@@ -316,7 +316,7 @@
             } );
 
         });
-        $('#fatmodal').on('hode.bs.modal', function(){
+        $('#fatmodal-search').on('hode.bs.modal', function(){
             $('.pagination a').remove();
         });
 

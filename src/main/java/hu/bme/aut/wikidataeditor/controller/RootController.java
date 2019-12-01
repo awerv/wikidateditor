@@ -47,7 +47,16 @@ public class RootController{
     	if (loginService.login(credentials, request)) {
     		return new ResponseEntity<>(HttpStatus.OK);
     	} else {
-    		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    	}
+    }
+
+	@GetMapping("/login")
+    public ResponseEntity<Void> login(HttpServletRequest request) {
+    	if (loginService.isLoggedIn(request)) {
+    		return new ResponseEntity<>(HttpStatus.OK);
+    	} else {
+    		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     	}
     }
     
@@ -56,8 +65,8 @@ public class RootController{
 		model.addAttribute("painting", wikidataService.getPaintingWithMetadata(id));
 		return "view";
 	}
-    
-    @GetMapping("/search")
+
+	@GetMapping("/search")
 	public ResponseEntity<TableData> getTableData(
 			@RequestParam(name = "p", required = false, defaultValue = "0") int page,
 			@RequestParam(name = "s", required = false, defaultValue = "15") int pageSize,

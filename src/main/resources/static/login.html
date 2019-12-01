@@ -57,11 +57,11 @@
         <!-- Remind Passowrd -->
         <div id="formFooter">
             <a class="underlineHover" href="https://www.wikidata.org/wiki/Special:PasswordReset">Forgot Password?</a><br>
-            <input type="button" class="fourth" value="Close" onclick="$('#thinmodal').modal('hide');">
+            <input type="button" class="fourth" value="Close" onclick="$('#thinmodal-login').modal('hide');">
         </div>
     </div>
     <script>
-        $('#thinmodal').on('shown.bs.modal', function(){
+        $('#thinmodal-login').on('shown.bs.modal', function(){
             $("#login-form").submit(function(e) {
                 e.preventDefault();
 
@@ -72,10 +72,8 @@
                     if(xhr.readyState === 4){
                         console.log("response arrived");
                         if(xhr.status === 200){
-                            console.log("response was 200");
                             $('#success-modal').modal('show');
-                        } else if(xhr.status === 400){
-                            console.log("response was 400");
+                        } else if(xhr.status === 401){
                             $('#fail-modal').modal('show');
                         }
                     }

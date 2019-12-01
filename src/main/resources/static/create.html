@@ -1,4 +1,26 @@
 <div class="wrapper">
+
+        <div class="modal fade text-center" id="create-fail-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Failure</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#create-fail-modal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>You must log in first to create new paintings on wikidata</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#create-fail-modal').modal('hide');">Close</button>
+                    </div>        
+                </div>
+            </div>
+        </div>
+    
+
+
         <div id="formContent">
         <!-- Tabs Titles -->
                         
@@ -56,32 +78,70 @@
 
         <!-- Remind Passowrd -->
         <div id="formFooter">
-            <input type="button" class="fourth" value="Close" onclick="$('#thinmodal').modal('hide');">
+            <input type="button" class="fourth" value="Close" onclick="$('#thinmodal-create').modal('hide');">
         </div>
         <script>
-            $('#create-form').submit(function(e){
-                e.preventDefault();
+            $('#thinmodal-create').on('shown.bs.modal', function(){
+                $('#create-form').submit(function(e){
+                    e.preventDefault();
 
-                var xhr = new XMLHttpRequest();
-                var url = '/create';
+                    var xhr = new XMLHttpRequest();
+                    var url = '/login';
             
-                xhr.onreadystatechange = function(){
-                    if(xhr.readyState === 4){
-                        var msg = xhr.responseText
-                        console.log(msg);
+                    xhr.onreadystatechange = function(){
+                        if(xhr.readyState === 4){
+                            if(xhr.status === 200){
+
+                                var xhr2 = new XMLHttpRequest();
+                            
+                                xhr2.onreadystatechange = function(){
+                                    if(xhr2.readyState === 4){
+                                        console.log("response arrived");
+                                        if(xhr2.status === 200){
+                                            $('#success-modal').modal('show');
+                                        } else if(xhr2.status === 401){
+                                            $('#fail-modal').modal('show');
+                                        }
+                                    }
+                                }
+                            
+                                xhr2.open("POST", url);
+                                xhr2.setRequestHeader("Content-Type", "application/json");
+                                xhr2.send(JSON.stringify({ username: $('#login').val(), password: $('#password').val() }));
+
+
+
+                            } else if(xhr.status === 403){
+                                $('#create-fail-modal').modal('show');
+                            }
+                        }
                     }
-                }
             
-                xhr.open("POST", url);
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.send(JSON.stringify({
-                    creator = $('#creator').val(),
-                    ctime = $('#ctime').val(),
-                    invnum = $('#invnum').val(),
-                    materials = $('#materials').val(),
-                    location = $('#location').val()
-                }));
+                    xhr.open("GET", url);
+                    xhr.send();
 
+                /*
+
+                    var xhr = new XMLHttpRequest();
+                    var url = '/login';
+                
+                    xhr.onreadystatechange = function(){
+                        if(xhr.readyState === 4){
+                            console.log(status);
+                        }
+                    }
+                
+                    xhr.open("POST", url);
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.send(JSON.stringify({
+                        creator = $('#creator').val(),
+                        ctime = $('#ctime').val(),
+                        invnum = $('#invnum').val(),
+                        materials = $('#materials').val(),
+                        location = $('#location').val()
+                    }));
+*/
+                });
             });
         </script>
     </div>
