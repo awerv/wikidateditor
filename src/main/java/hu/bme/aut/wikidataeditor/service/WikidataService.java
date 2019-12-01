@@ -32,6 +32,7 @@ import hu.bme.aut.wikidataeditor.property.WikidataProperties;
 import static hu.bme.aut.wikidataeditor.model.Property.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -216,6 +217,7 @@ public class WikidataService {
 		try {
 			ApiConnection connection = loginService.getApiConnection(request);
 			WikibaseDataEditor wbde = new WikibaseDataEditor(connection, wikidataProperties.getUrl());
+			
 			WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, wikidataProperties.getUrl());
 			
 			EntityDocument entity = wbdf.getEntityDocument(painting.getId());
@@ -312,10 +314,15 @@ public class WikidataService {
 				
 				List<Statement> materialStatements = item.findStatementGroup(MATERIAL).getStatements();
 				
+				LocalDate ctime = null;
+				
+				if (creationStatement != null) {
+					TimeValue value = (TimeValue) creationStatement.getValue();
+					ctime = LocalDate.of((int) value.getYear(), (int) value.getMonth(), (int) value.getDay());
+				}
+				
 				String creator = creatorStatement == null ? null 
 						: ((ItemIdValue) creatorStatement.getValue()).getId();
-				String ctime = creationStatement == null ? null
-						: ((TimeValue) creationStatement.getValue()).getYear() + "";
 				String inventoryId = inventoryStatement == null ? null
 						: ((StringValue) inventoryStatement.getValue()).getString();
 				String location = locationStatement == null ? null
@@ -408,5 +415,32 @@ public class WikidataService {
 		}
 		
 		return raw;
+	}
+
+	public Boolean isEntityInClass(String entityId, String classId) {
+		ApiConnection connection = BasicApiConnection.getWikidataApiConnection();
+		WikibaseDataFetcher wbdf = new WikibaseDataFetcher(connection, wikidataProperties.getUrl());
+		
+		try {
+			EntityDocument entity = wbdf.getEntityDocument(entityId);
+			if (entity == null) {
+				return null;
+			}
+			ItemDocument item = (ItemDocument) entity;
+			Statement statement = item
+					.findStatement(Datamodel.makePropertyIdValue(INSTANCE_OF, wikidataProperties.getUrl()));
+			if (statement == null) {
+				return null;
+			}
+			
+			String parentClassId = ((ItemIdValue) statement.getValue()).getId();
+			return parentClassId.equals(classId);
+		
+		} catch (MediaWikiApiErrorException e) {
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
