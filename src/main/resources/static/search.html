@@ -1,68 +1,278 @@
 <div>
 
-            <nav class="navbar navbar-expand-lg navbar-dark blue lighten-2 mb-4">
+	<div class="modal fade text-center" id="thinsubmodal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!--
+    <div class="modal fade text-center" id="fatsubmodal" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                </div>
+            </div>
+    </div>
+    -->
+    <nav class="navbar navbar-expand-lg navbar-dark blue lighten-2 mb-4">
       
-                    <!-- Collapsible content -->
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Collapsible content -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     
-                        <form class="form-inline mr-auto" id="search-form">
-                            <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="phrase">
-                            <button class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" type="submit" id="searchbtn">Search</button>
-                        </form>
+            <form class="form-inline mr-auto" id="search-form">
+                <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="phrase">
+                <button class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" type="submit" id="searchbtn">Search</button>
+            </form>
                     
-                    </div>
-                    <!-- Collapsible content -->
+        </div>
+        <!-- Collapsible content -->
                   
-                </nav>
-                <!--/.Navbar-->            
-            <table id="result-table" class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Label</th>
-                        <th scope="col">ID</th>
-                        <th scope="col">Url</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Actions</th>                
-                    </tr>
-                </thead>
-            </table>
-
-            <input type="button" class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" value="Close" onclick="$('#fatmodal').modal('hide');">
+    </nav>
+    <!--/.Navbar-->
+    <div class="modal-content">
+            <div class="pagination">
+            </div>
+                  
+        <table id="result-table" class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Label</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Url</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Actions</th>                
+                </tr>
+            </thead>
+        </table>            
+    </div>
+    <input type="button" class="btn btn-mdb-color btn-rounded btn-sm my-0 ml-sm-2" value="Close" onclick="$('#fatmodal').modal('hide');">
 
     <script>
 
+        function close_modal(){
+            table.destroy();
+            $('#fatmodal').modal('hide');
+        }
+
         function iconhandler(e){
-            console.log(e.id);
             // TODO: check if authenticated
             // TODO: pop up login if not
             // TODO: pop up edit modal
+            var qid = e.id.split('-')[0];
+            var action = e.id.split('-')[1];
+
+            if(action === 'view'){
+                // no login required
+                $('#thinsubmodal .modal-dialog .modal-content').load('view.html');
+				$('#thinsubmodal').modal('show');
+
+                console.log(qid);
+
+            } else if(action === 'edit' || action === 'delete'){
+                // login required
+            }
+
+
         }
 
-        $(document).ready(function(){
-
-            var table = $('#result-table').DataTable( {
+        function create_table(){
+            return $('#result-table').DataTable( {
                 "searching": false,
                 "paging": false,
                 "columns": [
                     { "data": "label", "title": "Label" },
-                    { "data": "entityId", "title": "ID" },
+                    { "data": "id", "title": "ID" },
                     { "data": "url", "title": "Url" },
                     { "data": "description", "title": "Description" },
                     { "data": "buttons", "title": "Actions"}
                 ],
                 "columnDefs": [{
                     "targets": -1,
+                    "orderable": false,
                     "render": function(data, type, row){
-                        return '<i id="' + row.entityId + '-edit" class="fas fa-edit fa-xl" onclick="iconhandler(this);"></i>' +
-                            '<i id="' + row.entityId + '-delete" class="fas fa-trash-alt fa-xl" onclick="iconhandler(this);"></i>';
+                        return '<i id="' + row.entityId + '-view"class="far fa-eye fa-2x" onclick="iconhandler(this);"></i> ' +
+                            '<i id="' + row.entityId + '-edit" class="fas fa-edit fa-2x" onclick="iconhandler(this);"></i> ' +
+                            '<i id="' + row.entityId + '-delete" class="fas fa-trash-alt fa-2x" onclick="iconhandler(this);"></i>';
                     }},
                     {
                         "targets": 2,
+                        "orderable": false,
                         "render": function(data, type, row){
                             return '<a target="_blank" href="' + row.url + '">link</a>';
                     }}
                 ]
             } );
+        }
+
+        const maxlength = 10;
+        var current = 0;
+
+        var table = create_table();
+
+
+        function click_handler_register(pages, pageCount){
+            $(".pagination a").click(function(e){
+                var id = e.target.id;
+                if(id){
+                    console.log(id);
+                    if(id === 'fwdstep'){
+                        console.log(id);
+                        $(".pagination").find('.active').each(function(){
+                            var i = Number(this.id);
+                            console.log('active: ' + i);
+                            var newcurrent = i + 1;
+                            var maxpgname = pages.length + 1;
+                            if(pageCount - newcurrent <= maxlength){
+                                writefull(newcurrent, pages, pageCount)
+                            } else {
+                                console.log('partial write');
+                                writepart(newcurrent, pages, pageCount);
+                            }
+                            $.get('/search', {"f": $('#phrase').val(), "p": newcurrent}, function(data, status){
+                                console.log(status);
+                                if(status == 'success'){
+                                    table.clear();
+                                    table.rows.add(data.paintings).draw();
+                                    $('.modal-content').find('*').each(function(){
+                                        $(this).css("font-size", "16px");
+                                    });
+                                }
+                            });
+
+                        });
+                    }
+                }
+                if(id === 'backstep'){
+                    console.log(id);
+                    $(".pagination").find('.active').each(function(){
+
+                        var i = Number(this.id);
+                        var newcurrent = i - 1;
+                        var maxpgname = pages.length + 1;
+                        if(pageCount - newcurrent <= maxlength){
+                            writefull(newcurrent, pages, pageCount);
+                        } else {
+                            writepart(newcurrent, pages, pageCount);
+                        }
+                        $.get('/search', {"f": $('#phrase').val(), "p": newcurrent}, function(data, status){
+                            console.log(status);
+                            if(status == 'success'){
+                                table.clear();
+                                table.rows.add(data.paintings).draw();
+                                $('.modal-content').find('*').each(function(){
+                                    $(this).css("font-size", "16px");
+                                });
+                            }
+                        });
+                    });
+                } else {
+
+                }
+            });
+
+        }
+
+
+/*
+            if(from === 0){
+                $('.pagination').append('<a id="backstep" href="#" hidden>&laquo;</a>');
+            } else {
+                $('.pagination').append('<a id="backstep" href="#">&laquo;</a>');
+            }
+            for(var i = from; i != maxlength+1; i++){
+                if(i == from){
+                    $('.pagination').append('<a class="active" id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
+                } else {
+                    $('.pagination').append('<a id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
+                }
+            }
+            if(from === pageCount){
+                $('.pagination').append('<a id="fwdstep" href="#" hidden>&raquo;</a>');
+            } else {
+                $('.pagination').append('<a id="fwdstep" href="#">&raquo;</a>');
+            }
+
+
+*/
+
+
+        function writefull(from, pages, pageCount){
+            var i = from;
+            if(from === 0){
+                $('#backstep').hide();
+            } else {
+                $('#backstep').show();
+            }
+            if(from === pageCount){
+                $('#fwdstep').hide();
+            } else {
+                $('#fwdstep').show();
+            }
+
+            $('.pagination .pagenum').each(function(index){
+                if(i+1 <= pageCount){
+                    $(this).attr('id', pages[i]);
+                    $(this).html(' ' + (i+1) + ' ');
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+                i++;
+            });
+        }
+
+        function writepart(from, pages, pageCount){
+            var i = from;
+            if(from === 0){
+                $('#backstep').hide();
+            } else {
+                $('#backstep').show();
+            }
+            if(from === pageCount){
+                $('#fwdstep').hide();
+            } else {
+                $('#fwdstep').show();
+            }
+
+            $('.pagination .pagenum').each(function(index){
+                if(i > 5){
+                    if(i == 9){
+                        $(this).attr('id', pageCount - 1);
+                        $(this).html(' ' + pageCount + ' ');
+                    } else {
+                        $(this).html(' . ');
+                        $(this).attr('id', '.');
+                    }
+                } else {
+                    $(this).attr('id', pages[i]);
+                    $(this).html(' ' + (i+1) + ' ');
+                }
+                i++;
+            });
+        }
+        $(document).ready(function(){
+
+/*
+     +-- current page at load
+     | 
+    [0 1 2 3 4 5 6 7 8 9 10]
+    [1 2 3 4 5 6. . . 10]
+
+fwd step
+
+       +-- current page at load
+       | 
+    [0 1 2 3 4 5 6 7 8 9 10]
+    [2 3 4 5 6 7 8 9 10 11]
+
+backstap
+
+     +-- current page at load
+     | 
+    [0 1 2 3 4 5 6 7 8 9 10]
+    [1 2 3 4 5 6. . . 10]
+*/
+
 
             $('.modal-content').find('*').each(function(){
                 $(this).css("font-size", "16px");
@@ -75,16 +285,57 @@
                 var phrase = $('#phrase').val();
                 console.log(phrase);
 
-                $.post('/search', {"phrase": phrase}, function(data, status){
+                $.get('/search', {"f": phrase, "p": 0}, function(data, status){
+
+                    console.log(data);
+
+                    var pages = Array.from(Array(data.pageCount).keys());
+                    var maxpgname = pages.length + 1;
+
+                    // add pager div
+                    // pagecount > 10 -> ...
+                    // draw enough 
+
+                    var from = 0;
+                    if(data.pageCount <= maxlength){
+
+                        $('.pagination').append('<a id="backstep" href="#" hidden>&laquo;</a>');
+                        for(var i = from; i != maxlength+1; i++){
+                            if(i == from){
+                                $('.pagination').append('<a class="active pagenum" id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
+                            } else {
+                                $('.pagination').append('<a id="' + pages[i] + '" class="pagenum" href="#"> ' + (i+1) + ' </a>');
+                            }
+                        }
+                        $('.pagination').append('<a id="fwdstep" href="#">&raquo;</a>');
+
+                    } else {
+
+                        $('.pagination').append('<a id="backstep" href="#" hidden>&laquo;</a>');
+                        for(var i = from, j = 0; j != maxlength - 4; j++, i++){
+                            if(i == from){
+                                $('.pagination').append('<a class="active pagenum" id="' + pages[i] + '" href="#"> ' + (i+1) + ' </a>');
+                            } else {
+                                $('.pagination').append('<a id="' + pages[i] + '" class="pagenum" href="#"> ' + (i+1) + ' </a>');
+                            }
+                        }
+                        $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
+                        $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
+                        $('.pagination').append('<a id="." class="pagenum" href="#"> . </a>');
+                        $('.pagination').append('<a id="' + (data.pageCount - 1) + '" class="pagenum" href="#"> ' + data.pageCount + ' </a>');
+                        $('.pagination').append('<a id="fwdstep" href="#">&raquo;</a>');
+        
+                    }
+                    click_handler_register(pages, data.pageCount);
+
                     if(status == 'success'){
-                        table.clear();
-                        table.rows.add(JSON.parse(data)).draw();
+                        table.destroy();
+                        table = create_table();
+                        table.rows.add(data.paintings).draw();
                         $('.modal-content').find('*').each(function(){
                             $(this).css("font-size", "16px");
                         });
-
                     }
-
                 });
 
             } );
