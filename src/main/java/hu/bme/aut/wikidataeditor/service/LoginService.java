@@ -26,6 +26,7 @@ public class LoginService {
 			
 			if (connection.isLoggedIn()){
 				request.getSession().setAttribute(API_CONNECTION, connection);
+				return true;
 			}
 			
 		} catch(LoginFailedException e) {

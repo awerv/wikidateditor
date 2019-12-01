@@ -1,4 +1,44 @@
     <div class="wrapper">
+
+        <div class="modal fade text-center" id="fail-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Failure</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#fail-modal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Username and/or password is incorrect.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#fail-modal').modal('hide');">Close</button>
+                    </div>        
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade text-center" id="success-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Success</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#success-modal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Login was successful.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#success-modal').modal('hide');">Close</button>
+                    </div>        
+                </div>
+            </div>
+        </div>    
+
+
         <div id="formContent">
         <!-- Tabs Titles -->
                         
@@ -21,28 +61,30 @@
         </div>
     </div>
     <script>
-      $("#login-form").submit(function(e) {
-          e.preventDefault();
+        $('#thinmodal').on('shown.bs.modal', function(){
+            $("#login-form").submit(function(e) {
+                e.preventDefault();
 
-          var xhr = new XMLHttpRequest();
-          var url = '/login';
-      
-          xhr.onreadystatechange = function(){
-              if(xhr.readyState === 4){
-                  var msg = xhr.responseText
-                  if(xhr.responseText === 'ALREADYIN'){
-                      console.log(msg);
-                  } else if(xhr.responseText === 'AUTHFAIL'){
-                      console.log(msg);
-                  } else if(xhr.responseText === 'AUTHOK'){
-                      console.log(msg);
-                  }
-              }
-          }
-      
-          xhr.open("POST", url);
-          xhr.setRequestHeader("Content-Type", "application/json");
-          xhr.send(JSON.stringify({ username: $('#login').val(), password: $('#password').val() }));    
-      });
+                var xhr = new XMLHttpRequest();
+                var url = '/login';
+            
+                xhr.onreadystatechange = function(){
+                    if(xhr.readyState === 4){
+                        console.log("response arrived");
+                        if(xhr.status === 200){
+                            console.log("response was 200");
+                            $('#success-modal').modal('show');
+                        } else if(xhr.status === 400){
+                            console.log("response was 400");
+                            $('#fail-modal').modal('show');
+                        }
+                    }
+                }
+            
+                xhr.open("POST", url);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify({ username: $('#login').val(), password: $('#password').val() }));    
+            });
+        });
     </script>
 </div>
