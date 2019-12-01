@@ -2,17 +2,22 @@ package hu.bme.aut.wikidataeditor.service;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.wikidata.wdtk.util.WebResourceFetcherImpl;
 import org.wikidata.wdtk.wikibaseapi.BasicApiConnection;
 import org.wikidata.wdtk.wikibaseapi.LoginFailedException;
 
-import hu.bme.aut.wikidataeditor.auth.Credentials;
+import hu.bme.aut.wikidataeditor.model.Credentials;
+import hu.bme.aut.wikidataeditor.property.WikidataProperties;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class LoginService {
+	
+	@Autowired
+	WikidataProperties properties;
 	
 	private static final String API_CONNECTION = "API_CONNECTION";
 	
@@ -21,11 +26,16 @@ public class LoginService {
 			.setUserAgent("Wikidata Toolkit WikidataEditor");
 
 		try {
-			BasicApiConnection connection = BasicApiConnection.getWikidataApiConnection();
+			
+			BasicApiConnection connection = properties.getUrl().contains("test")
+					? BasicApiConnection.getTestWikidataApiConnection()
+					: BasicApiConnection.getWikidataApiConnection();
+			
 			connection.login(cred.getUsername(), cred.getPassword());
 			
 			if (connection.isLoggedIn()){
 				request.getSession().setAttribute(API_CONNECTION, connection);
+				return true;
 			}
 			
 		} catch(LoginFailedException e) {

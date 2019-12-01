@@ -1,18 +1,42 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorator="layout">
+<html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<title>View Painting</title>
 	</head>
 	<body>
-		<div layout:fragment="content">
+		<div>
 			<dl>
-				<dt>Name</dt>
-				<dd th:text="${painting.name}"></dd>
-				<dt>Artist</dt>
-				<dd th:text="${painting.artist}"></dd>
-				<dt>Creation</dt>
-				<dd th:text="${painting.creation}"></dd>
+				<dt>Label</dt>
+				<dd>
+					<a th:href="${painting.url}" th:text="${painting.label}"></a>
+				</dd>
+				
+				<dt>EntityId</dt>
+				<dd th:text="${painting.id}"></dd>
+				
+				<dt>Description</dt>
+				<dd th:text="${painting.description}"></dd>
+				
+				<dt>Creator</dt>
+				<dd>
+					<a th:href="${painting.creator.url}" th:text="${painting.creator.label}"></a>
+				</dd>
+				
+				<dt>Creation time</dt>
+				<dd th:text="${painting.ctime}"></dd>
+				
+				<dt>Inventory number</dt>
+				<dd th:text="${painting.invnum}"></dd>
+				
+				<dt>Materials</dt>
+				<dd th:each="material : ${painting.materials}">
+					<a th:href="${material.url}" th:text="${material.label}"></a>
+				</dd>
+				
+				<dt>Location</dt>
+				<dd>
+					<a th:href="${painting.location.url}" th:text="${painting.location.label}"></a>
+				</dd>
 			</dl>
 		</div>
 	</body>

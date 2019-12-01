@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TableData {
-	private List<Paint> paintings;
+	private List<PaintingListDTO> paintings;
 	private String filter;
 	private Integer count;
 	private Integer page;

@@ -1,4 +1,4 @@
-package hu.bme.aut.wikidataeditor.auth;
+package hu.bme.aut.wikidataeditor.model;
 
 import javax.validation.constraints.NotNull;
 
