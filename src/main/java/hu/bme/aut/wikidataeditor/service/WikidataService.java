@@ -380,8 +380,6 @@ public class WikidataService {
 		return null;
 	}
 	
-	
-	
 	private ItemMetaData getItemMetaData(String itemId, WikibaseDataFetcher wbdf) throws MediaWikiApiErrorException, IOException {
 		wbdf.getFilter().excludeAllProperties();
 		wbdf.getFilter().setLanguageFilter(Collections.singleton("en"));
