@@ -157,6 +157,8 @@ public class WikidataService {
 			= (PropertyIdValue) PropertyIdValueImpl.fromId(INSTANCE_OF, wikidataProperties.getUrl());
 		PropertyIdValue creatorPropId
 			= (PropertyIdValue) PropertyIdValueImpl.fromId(CREATOR, wikidataProperties.getUrl());
+		PropertyIdValue creationTimePropId
+			= (PropertyIdValue) PropertyIdValueImpl.fromId(CREATION_TIME, wikidataProperties.getUrl());
 		PropertyIdValue invPropId
 			= (PropertyIdValue) PropertyIdValueImpl.fromId(INVENTORY_NUMBER, wikidataProperties.getUrl());
 		PropertyIdValue locationPropId
@@ -186,6 +188,19 @@ public class WikidataService {
 			.build();
 			
 			builder = builder.withStatement(invStatement);
+		}
+		
+		if (painting.getCtime() != null) {
+			LocalDate ctime = painting.getCtime();
+			Statement ctimeStatement = StatementBuilder.forSubjectAndProperty(noid, creationTimePropId)
+			.withValue(Datamodel.makeTimeValue(
+					(long) ctime.getYear(), 
+					(byte) ctime.getMonthValue(),
+					(byte) ctime.getDayOfMonth(), 
+					TimeValue.CM_GREGORIAN_PRO
+			)).build();
+			
+			builder = builder.withStatement(ctimeStatement);
 		}
 		
 		if (painting.getLocation() != null) {
@@ -232,6 +247,8 @@ public class WikidataService {
 				= (PropertyIdValue) PropertyIdValueImpl.fromId(CREATOR, wikidataProperties.getUrl());
 			PropertyIdValue invPropId
 				= (PropertyIdValue) PropertyIdValueImpl.fromId(INVENTORY_NUMBER, wikidataProperties.getUrl());
+			PropertyIdValue creationTimePropId
+				= (PropertyIdValue) PropertyIdValueImpl.fromId(CREATION_TIME, wikidataProperties.getUrl());
 			PropertyIdValue locationPropId
 				= (PropertyIdValue) PropertyIdValueImpl.fromId(LOCATION, wikidataProperties.getUrl());
 			PropertyIdValue materialPropId
@@ -257,6 +274,22 @@ public class WikidataService {
 						.stream().map(Statement::getStatementId).collect(Collectors.toSet());
 				
 				item = item.withoutStatementIds(oldStatements).withStatement(invStatement);
+			}
+			
+			if (painting.getCtime() != null) {
+				LocalDate ctime = painting.getCtime();
+				Statement ctimeStatement = StatementBuilder.forSubjectAndProperty(subjectId, creationTimePropId)
+				.withValue(Datamodel.makeTimeValue(
+						(long) ctime.getYear(), 
+						(byte) ctime.getMonthValue(),
+						(byte) ctime.getDayOfMonth(), 
+						TimeValue.CM_GREGORIAN_PRO
+				)).build();
+				
+				Set<String> oldStatements = item.findStatementGroup(creationTimePropId)
+						.stream().map(Statement::getStatementId).collect(Collectors.toSet());
+				
+				item = item.withoutStatementIds(oldStatements).withStatement(ctimeStatement);
 			}
 			
 			if (painting.getLocation() != null) {
