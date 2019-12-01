@@ -9,7 +9,7 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" id="error-message">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#create-fail-modal').modal('hide');">Close</button>
@@ -129,9 +129,11 @@
                                             $('#create-success-modal').modal('show');
                                         } else {
                                             $('#error-message p').remove();
-                                            JSON.parse(xhr.responseText).array.forEach(element => {
-                                                $('#error-message').add("<p>" + element + "</p>");
+                                            JSON.parse(xhr2.responseText).forEach(element => {
+                                                console.log(element)
+                                                $('#error-message').append("<p>" + element + "</p>");
                                             });
+                                            $('#create-fail-modal').modal('show');
                                             $('#create-fail-modal').modal('show');
                                         }
 
@@ -139,10 +141,14 @@
                                     }
                                 }
                             
+
+// Q4860448
+// Q10292830
+
                                 var payload = JSON.stringify(
                                     { 
-                                        id: $('#id').val(),
-                                        url: $('#url').val(),
+                                        id: $('#id').val() == "" ? null : $('#id').val(),
+                                        url: $('#url').val() == "" ? null : $('#url').val(),
                                         label: $('#label').val(),
                                         description: $('#description').val(),
                                         creator: $('#creator').val(),

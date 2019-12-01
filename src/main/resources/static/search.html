@@ -31,7 +31,31 @@
                 </div>
             </div>
         </div>
-            <!--
+
+        <div class="modal fade text-center" id="delete-modal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Warning</h5>
+                        <button type="button" class="close" aria-label="Close" onclick="$('#delete-modal').modal('hide');">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this item?</p>
+                        <p id="delete-id"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" onclick="$('#delete-modal').modal('hide');">Cancel</button>
+                        <a class="btn btn-danger btn-ok" onclick="send_delete_request()">Delete</a>
+                    </div>        
+                </div>
+            </div>
+        </div>
+
+
+
+        <!--
     <div class="modal fade text-center" id="fatsubmodal" role="dialog">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -74,10 +98,13 @@
 
     <script>
 
+        function send_delete_request(){
+            var id = $('#delete-id').html();
+
+            // send request
+        }
+
         function iconhandler(e){
-            // TODO: check if authenticated
-            // TODO: pop up login if not
-            // TODO: pop up edit modal
             var qid = e.id.split('-')[0];
             var action = e.id.split('-')[1];
 
@@ -106,6 +133,10 @@
                                     $('#thinsubmodal-edit .modal-dialog .modal-content').load('/update/'+qid);
                                     $('#thinsubmodal-edit').modal('show');
 
+                                } else if(action == 'delete'){
+                                    console.log("loading edit");
+                                    $('#delete-id').html(qid);
+                                    $('#delete-modal').modal('show');
                                 }
                             } else if(xhr.status === 403){
                                 console.log('403');

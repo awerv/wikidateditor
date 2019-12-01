@@ -2,6 +2,8 @@ package hu.bme.aut.wikidataeditor.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +134,7 @@ public class RootController{
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     	}
     }
-    
+    /*
     @PostMapping("/delete")
     public ResponseEntity<Map<String, String>> delete(@RequestBody PaintingDTO modificationData, HttpServletRequest request) {
 
@@ -150,7 +152,8 @@ public class RootController{
     	} else {
     		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     	}
-    }
+	}
+	*/
     
     private void checkLogin(HttpServletRequest request) {
     	if (!loginService.isLoggedIn(request)) {

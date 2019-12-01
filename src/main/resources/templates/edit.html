@@ -1,37 +1,37 @@
 <div class="wrapper">
 
-        <div class="modal fade text-center" id="create-fail-modal" role="dialog">
+        <div class="modal fade text-center" id="edit-fail-modal" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Failure</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#create-fail-modal').modal('hide');">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#edit-fail-modal').modal('hide');">
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#create-fail-modal').modal('hide');">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#edit-fail-modal').modal('hide');">Close</button>
                     </div>        
                 </div>
             </div>
         </div>
     
-        <div class="modal fade text-center" id="create-success-modal" role="dialog">
+        <div class="modal fade text-center" id="edit-success-modal" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Success</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#success-modal').modal('hide');">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#edt-success-modal').modal('hide');">
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body" id="error-message">
-                        <p>Painting creation was successful.</p>
+                        <p>Painting edit was successful.</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#success-modal').modal('hide');">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="$('#edt-success-modal').modal('hide');">Close</button>
                     </div>        
                 </div>
             </div>
@@ -103,7 +103,7 @@
 
         <!-- Remind Passowrd -->
         <div id="formFooter">
-            <input type="button" value="Close" onclick="$('#thinmodal-create').modal('hide');">
+            <input type="button" value="Close" onclick="$('#thinsubmodal-edit').modal('hide');">
         </div>
         <script>
             $('#thinmodal-create').on('shown.bs.modal', function(){
